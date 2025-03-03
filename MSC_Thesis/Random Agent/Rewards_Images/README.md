@@ -1,0 +1,1 @@
+This folder contains plots generated from a Python script interacting with the Super Mario World environment in Gym Retro. The script takes random actions in the environment, updates key press counts and reward totals, and generates the following plots
