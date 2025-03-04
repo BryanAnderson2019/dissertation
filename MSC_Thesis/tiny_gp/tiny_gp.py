@@ -35,6 +35,7 @@ def do(env, x, y):
     #print(f"{x}, played {y} times")
     #print("do has been done")
     return x
+
 def combine(x, y): 
     arr = np.array([0] * 12)
     for i in range(12):
@@ -81,12 +82,16 @@ class GPTree:
 
     def compute_tree(self): 
         # print(f"self.data = {self.data}, combine = {combine}, do = {do}")
-        if (isinstance(self.data, np.ndarray) != True): 
-            if (self.data == do):
-                return self.data(self.env, self.left.compute_tree(), self.right.data)
-            else: 
-                return self.data(self.left.compute_tree(), self.right.compute_tree())
-        else: return self.data
+        ram = getRam(self.env)
+        marioX, marioY, layer1x, layer1y  = getXY(ram)
+        obs, rew, done, _info = self.env.step(np.array([0] * 12))
+        while ((marioY != 0) and (rew != 100)):
+            if (isinstance(self.data, np.ndarray) != True): 
+                if (self.data == do):
+                    return self.data(self.env, self.left.compute_tree(), self.right.data)
+                else: 
+                    return self.data(self.left.compute_tree(), self.right.compute_tree())
+            else: return self.data
             
     def random_tree(self, grow, max_depth, depth = 0): # create random tree using either grow or full method
         if depth == 0:
