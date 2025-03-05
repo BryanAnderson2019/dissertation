@@ -7,11 +7,11 @@ import retro
 import time
 
 buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", "L", "R"]
-SaveLocationLoosing = "/home/bryan/MSC_Thesis/Player_Inputs/Dataset/lossing/YoshiIsland2/"
-SaveLocationWinning = "/home/bryan/MSC_Thesis/Player_Inputs/Dataset/winning/YoshiIsland1/"
+SaveLocationLoosing = "/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/lossing/YoshiIsland2/"
+SaveLocationWinning = "/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/winning/YoshiIsland2/"
 fileName = "test"
 
-saved = True
+save = True
 arrStart = 0
 arrEnd = 0
 losses = 0
@@ -24,6 +24,7 @@ Training = np.load("/home/bryan/MSC_Thesis/Player_Inputs/Dataset/YoshiIsland1/Ta
 
 Xtrain = Training[0]
 Ytrain = Training[1]
+data = Training[1]
 print(Ytrain.shape)  # Print the shape of the training labels array
 
 # Fix issues with numpy loading
@@ -39,36 +40,37 @@ obs = env.reset()
 for action in Ytrain:
     arrEnd += 1
 
-    for a in action:
-        b = []
-        for index in range(12):
-            if a[index] == 1:
-                b.append(buttons[index])
-
-        # print(f"a = {a}")
-        # print(f"buttons = {b}")
-        
+    for a in action:     
         obs, rew, done, _info = env.step(a)  # Use the generated action
         #print(f"rew = {rew}")
         #print(f"done = {done}")
         ram = getRam(env)
         marioX, marioY, layer1x, layer1y  = getXY(ram)
-        print(f"marioX = {marioX}, marioY = {marioY}")
+        # print(f"marioX = {marioX}, marioY = {marioY}")
 
-        # if (marioX < 4820):
-        #    break
-        #else:
-        #    print(f"marioX = {marioX}, marioY = {marioY}")
-
-        if (marioY == 0 & save):
+        if (marioY == 0 and save):
             losses += 1
-            # np.save((SaveLocationLoosing + fileName + losses),np.array((Xtrain[arrStart:arrEnd],Ytrain[arrStart:arrEnd])))
+            np.save((SaveLocationLoosing + fileName + str(losses)),np.array((Xtrain[arrStart:arrEnd],data[arrStart:arrEnd])))
+            print(f"losses = {losses}")
+            print(f"arrStart = {arrStart}")
+            print(f"arrEnd = {arrEnd}")
             save = False
-            arrStart = arrEnd
 
-        if (rew == 100 & save):
-            # np.save(SaveLocationWinning + fileName,np.array((Xtrain[arrStart:arrEnd],Ytrain[arrStart:arrEnd])))
+        if (marioX > 16 and save != True):
+            save = True
+            print(f"save = {save}")
+            arrStart = arrEnd - 1
+            print(f"arrEnd = {arrEnd}")
+            print(f"arrStart now equals = {arrStart}")
+
+        if (rew == 100 and save):
+            np.save((SaveLocationWinning + fileName),np.array((Xtrain[arrStart:arrEnd],data[arrStart:arrEnd])))
+            print(f"mario finished the level")
+            print(f"losses = {losses}")
+            print(f"arrStart = {arrStart}")
+            print(f"arrEnd = {arrEnd}")
             save = False
+            
             quit()
         
         env.render()  # Render the environment

@@ -51,5 +51,5 @@ def playActions(actions, times):
         # adds a ime delay
         time.sleep(0.05)
 
-playActions(["RIGHT"], 100)
+playActions(["UP"], 100)
 playActions(["A", "RIGHT"], 100)

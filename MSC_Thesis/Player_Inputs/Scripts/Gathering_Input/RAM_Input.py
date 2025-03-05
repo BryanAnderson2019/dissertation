@@ -282,7 +282,7 @@ class Interactive(abc.ABC):
 
         #Making a state acion pair. Remember to check the datatypes (they are objects -> arrays)
         dataset = np.array((final_state_array,final_action_array))
-        #np.save("/home/bryan/MSC_Thesis/Player_Inputs/Dataset/YoshiIsland2/Session1L1",dataset)
+        np.save("/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/YoshiIsland2/Session1L1",dataset)
         self._env.close()
         sys.exit(0)
 

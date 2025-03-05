@@ -10,7 +10,7 @@ from rominfo import *
 import retro
 
 buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", "L", "R"]
-actionsArray = [["B"], ["Y"], ["SELECT"], ["START"], ["UP"], ["DOWN"], ["LEFT"], ["RIGHT"], ["A"], ["X"], ["L"], ["R"]]
+actionsArray = [["B"], ["Y"], ["DOWN"], ["LEFT"], ["RIGHT"], ["A"], ["X"]]
 actions_ag = []
 
 for action in actionsArray:
@@ -32,6 +32,7 @@ PROB_MUTATION   = 0.2  # per-node mutation probability
 def do(env, x, y): 
     for i in range(y):
         obs, rew, done, _info = env.step(x)  # Play action x, y times in env
+
     #print(f"{x}, played {y} times")
     #print("do has been done")
     return x
@@ -43,6 +44,7 @@ def combine(x, y):
             arr[i] = 1
         else:
             arr[i] = x[i] + y[i]
+
     # print("combine has been done")
     return arr
 FUNCTIONS = [do, combine]
@@ -82,16 +84,12 @@ class GPTree:
 
     def compute_tree(self): 
         # print(f"self.data = {self.data}, combine = {combine}, do = {do}")
-        ram = getRam(self.env)
-        marioX, marioY, layer1x, layer1y  = getXY(ram)
-        obs, rew, done, _info = self.env.step(np.array([0] * 12))
-        while ((marioY != 0) and (rew != 100)):
-            if (isinstance(self.data, np.ndarray) != True): 
-                if (self.data == do):
-                    return self.data(self.env, self.left.compute_tree(), self.right.data)
-                else: 
-                    return self.data(self.left.compute_tree(), self.right.compute_tree())
-            else: return self.data
+        if (isinstance(self.data, np.ndarray) != True): 
+            if (self.data == do):
+                return self.data(self.env, self.left.compute_tree(), self.right.data)
+            else: 
+                return self.data(self.left.compute_tree(), self.right.compute_tree())
+        else: return self.data
             
     def random_tree(self, grow, max_depth, depth = 0): # create random tree using either grow or full method
         if depth == 0:
@@ -171,12 +169,23 @@ def init_population(): # ramped half-and-half
     return pop
 
 def fitness(individual, dataset): # inverse mean absolute error over dataset normalized to [0,1]
-    individual.compute_tree()
     ram = getRam(individual.env)
     marioX, marioY, layer1x, layer1y  = getXY(ram)
-    # print(f"marioX = {marioX}, marioY = {marioY}")
-    # print(100 / abs(FINISH - marioX))
-    return 100 / abs(FINISH - marioX)
+    obs, rew, done, _info = individual.env.step(np.array([0] * 12))
+    distances = [marioX]
+
+    while ((marioY > 0) and (rew != 100)):
+        individual.compute_tree()
+
+        ram = getRam(individual.env)
+        marioX, marioY, layer1x, layer1y  = getXY(ram)
+        obs, rew, done, _info = individual.env.step(np.array([0] * 12))
+        distances.append(marioX)
+        # print(f"marioX = {marioX}, marioY = {marioY}")
+
+    print(f"max(distances) = {max(distances)}")
+    print(f"len(distances) = {len(distances)}")
+    return 100 / abs(FINISH - max(distances))
                 
 def selection(population, fitnesses): # select one individual using tournament selection
     tournament = [randint(0, len(population)-1) for i in range(TOURNAMENT_SIZE)] # select tournament contenders

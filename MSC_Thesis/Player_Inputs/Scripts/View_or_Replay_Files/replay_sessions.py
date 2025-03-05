@@ -11,7 +11,7 @@ buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", 
 env = retro.make(game="SuperMarioWorld-Snes", state='YoshiIsland2', obs_type=retro.Observations.IMAGE)
 
 # Load training data from the .npy file
-Training = np.load("/home/bryan/MSC_Thesis/Player_Inputs/Dataset/YoshiIsland2/AnshulL2.npy", allow_pickle=True)
+Training = np.load("/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/lossing/YoshiIsland2/test2.npy", allow_pickle=True)
 
 Xtrain = Training[0]
 Ytrain = Training[1]
@@ -34,14 +34,16 @@ for action in Ytrain:
             if a[index] == 1:
                 b.append(buttons[index])
 
-        # print(f"a = {a}")
-        # print(f"buttons = {b}")
+        print(f"a = {a}")
+        print(f"buttons = {b}")
         
         obs, rew, done, _info = env.step(a)  # Use the generated action
         #print(f"rew = {rew}")
         #print(f"done = {done}")
         ram = getRam(env)
         marioX, marioY, layer1x, layer1y  = getXY(ram)
+        #print(f"marioX = {marioX}, marioY = {marioY}")
+        
         # if (marioX < 4820):
         #    break
         #else:
