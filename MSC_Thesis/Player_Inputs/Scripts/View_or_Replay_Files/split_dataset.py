@@ -59,7 +59,7 @@ for action in Ytrain:
         if (marioX > 16 and save != True):
             save = True
             print(f"save = {save}")
-            arrStart = arrEnd - 1
+            arrStart = arrEnd
             print(f"arrEnd = {arrEnd}")
             print(f"arrStart now equals = {arrStart}")
 
@@ -70,8 +70,6 @@ for action in Ytrain:
             print(f"arrStart = {arrStart}")
             print(f"arrEnd = {arrEnd}")
             save = False
-            
-            quit()
         
         env.render()  # Render the environment
         # Optionally, introduce a time delay to observe the game rendering
