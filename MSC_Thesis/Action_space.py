@@ -13,6 +13,7 @@ actionsArray = [["B"], ["Y"], ["SELECT"], ["START"], ["UP"], ["DOWN"], ["LEFT"],
 actions_ag = []
 played_actions = []
 index = 1
+view = True
 
 env = retro.make(game="SuperMarioWorld-Snes", state='YoshiIsland2', scenario=None, obs_type=retro.Observations.IMAGE)
 obs = env.reset()
@@ -32,6 +33,7 @@ for i in range(12):
 
 def playActions(actions, times):
     global index
+    global view
     # convert the actions into a 12-bit binary number 
     arr = np.array([0] * 12)
     for button in actions:
@@ -40,6 +42,7 @@ def playActions(actions, times):
     # playes the actions for the amount of times specified
     for x in range(times):
         obs, rew, done, _info = env.step(arr)  # Use the generated action
+        print("rendering")
         env.render()  # Render the environment
 
         # prints out the action on the terminal
@@ -47,8 +50,17 @@ def playActions(actions, times):
         print(f"{arr}")
         print(f"button(s): {actions} \n")
         index += 1
-
         # adds a ime delay
-        time.sleep(1)
+        #time.sleep(1)
 
-playActions(["UP"], 10000)
+    ram = getRam(env)
+    marioX, marioY, layer1x, layer1y  = getXY(ram)
+    print(f"marioX = {marioX}, marioY = {marioY}")
+
+playActions(["Y", "RIGHT"], 137)
+playActions([], 2)
+playActions(["Y", "RIGHT"], 160)
+playActions([], 2)
+playActions(["Y", "RIGHT"], 192)
+playActions([], 2)
+playActions(["Y", "RIGHT"], 150)

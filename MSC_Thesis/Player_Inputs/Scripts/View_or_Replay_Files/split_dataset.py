@@ -7,14 +7,14 @@ import retro
 import time
 
 buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", "L", "R"]
-SaveLocationLoosing = "/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/lossing/YoshiIsland2/"
+SaveLocationLosing = "/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/lossing/YoshiIsland2/"
 SaveLocationWinning = "/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/winning/YoshiIsland2/"
 fileName = "test"
 
 save = True
 arrStart = 0
 arrEnd = 0
-losses = 0
+loses = 0
 
 # Load the Super Mario World environment
 env = retro.make(game="SuperMarioWorld-Snes", state='YoshiIsland2', obs_type=retro.Observations.IMAGE)
@@ -49,24 +49,22 @@ for action in Ytrain:
         # print(f"marioX = {marioX}, marioY = {marioY}")
 
         if (marioY == 0 and save):
-            losses += 1
-            np.save((SaveLocationLoosing + fileName + str(losses)),np.array((Xtrain[arrStart:arrEnd],data[arrStart:arrEnd])))
-            print(f"losses = {losses}")
+            loses += 1
+            np.save((SaveLocationLosing + fileName + str(loses)),np.array((Xtrain[arrStart:arrEnd],data[arrStart:arrEnd])))
+            print(f"loses = {loses}")
             print(f"arrStart = {arrStart}")
             print(f"arrEnd = {arrEnd}")
             save = False
-
-        if (marioX > 16 and save != True):
+        elif (marioX > 16 and save != True):
             save = True
             print(f"save = {save}")
             arrStart = arrEnd
             print(f"arrEnd = {arrEnd}")
             print(f"arrStart now equals = {arrStart}")
-
-        if (rew == 100 and save):
+        elif (rew == 100 and save):
             np.save((SaveLocationWinning + fileName),np.array((Xtrain[arrStart:arrEnd],data[arrStart:arrEnd])))
             print(f"mario finished the level")
-            print(f"losses = {losses}")
+            print(f"loses = {loses}")
             print(f"arrStart = {arrStart}")
             print(f"arrEnd = {arrEnd}")
             save = False

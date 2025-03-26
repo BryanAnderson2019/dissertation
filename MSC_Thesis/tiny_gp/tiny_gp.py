@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath("/home/bryan/MSC_Thesis/Player_Inputs/Scripts/Ga
 from rominfo import *
 import retro
 
+level = "YoshiIsland2" 
 buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", "L", "R"]
 actionsArray = [["B"], ["Y"], ["DOWN"], ["LEFT"], ["RIGHT"], ["A"], ["X"]]
 actions_ag = []
@@ -29,7 +30,7 @@ TOURNAMENT_SIZE = 5    # size of tournament for tournament selection
 XO_RATE         = 0.8  # crossover rate 
 PROB_MUTATION   = 0.2  # per-node mutation probability 
 
-def do(env, x, y): 
+def do(env, x, y, view = False): 
     i = 0
     ram = getRam(env)
     marioX, marioY, layer1x, layer1y  = getXY(ram)
@@ -45,6 +46,8 @@ def do(env, x, y):
                 print(f"{x}, played {i} times and ended")
                 return x
 
+            if(view):
+                env.render()  # Render the environment
     print(f"{x}, played {i} times")
     #print("do has been done")
     return x
@@ -113,7 +116,7 @@ class GPTree:
                 self.data = TERMINALS[randint(0, len(TERMINALS)-1)]
             else:
                 self.data = FUNCTIONS[randint(0, len(FUNCTIONS)-1)]
-        if (isinstance(self.data, np.ndarray) or type(self.data) == int):
+        if ((isinstance(self.data, np.ndarray) or type(self.data) == int) == False):
             if (self.data == do):
                 self.left = GPTree()          
                 self.left.random_tree(grow, max_depth, depth = depth + 1)
@@ -172,6 +175,15 @@ class GPTree:
             print("___________second_after_scan_tree____________")
             # second.print_tree()
             self.scan_tree([randint(1, self.size())], second) # 2nd subtree "glued" inside 1st tree
+
+    def replay(self, env): 
+        # print(f"self.data = {self.data}, combine = {combine}, do = {do}")
+        if (isinstance(self.data, np.ndarray) != True): 
+            if (self.data == do):
+                return self.data(env, self.left.replay(env), self.right.data, view = True)
+            else: 
+                return self.data(self.left.replay(env), self.right.replay(env))
+        else: return self.data
 # end class GPTree
                    
 def init_population(): # ramped half-and-half
@@ -188,7 +200,7 @@ def init_population(): # ramped half-and-half
     return pop
 
 def fitness(individual, pop, gen):
-    env = retro.make(game="SuperMarioWorld-Snes", state='YoshiIsland2', scenario=None, obs_type=retro.Observations.IMAGE)
+    env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
     obs = env.reset()
     ram = getRam(env)
     marioX, marioY, layer1x, layer1y  = getXY(ram)
@@ -242,6 +254,7 @@ def main():
             parent1.mutation()
             print(f"___________parent1_after_mutation_of_pop_{i}_gen_{gen}____________")
             parent1.print_tree()
+            
             nextgen_population.append(parent1)
         population=nextgen_population
         fitnesses = [fitness(population[i], i, gen) for i in range(POP_SIZE)]
@@ -253,11 +266,25 @@ def main():
             print("________________________")
             print("gen:", gen, ", best_of_run_f:", round(max(fitnesses),3), ", best_of_run:") 
             best_of_run.print_tree()
+
+            env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
+            obs = env.reset()
+            best_of_run.replay(env)
+            env.render(close=True)
+            env.close()
+
         if best_of_run_f == 1: break   
     
     print("\n\n_________________________________________________\nEND OF RUN\nbest_of_run attained at gen " + str(best_of_run_gen) +\
           " and has f=" + str(round(best_of_run_f,3)))
     best_of_run.print_tree()
+
+    env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
+    obs = env.reset()
+    best_of_run.replay(env)
+    env.render(close=True)
+    env.close()
+    
     
 if __name__== "__main__":
   main()
