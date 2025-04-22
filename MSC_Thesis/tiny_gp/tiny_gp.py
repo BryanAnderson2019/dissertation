@@ -18,23 +18,33 @@ for action in actionsArray:
     arr = np.array([0] * 12)
     for button in action:
         arr[buttons.index(button)] = 1
+    print(arr)
     actions_ag.append(arr)
 
 POP_SIZE        = 30   # population size
 MIN_DEPTH       = 2    # minimal initial random tree depth
 MAX_DEPTH       = 5    # maximal initial random tree depth
-MAX_STEPS       = 200  # maximal steps the agent can do with one action
+MAX_STEPS       = 300  # maximal steps the agent can do with one action
 FINISH          = 4820 # The x position of the worlds finish or just a goal for your mario agent
 GENERATIONS     = 250  # maximal number of generations to run evolution
 TOURNAMENT_SIZE = 5    # size of tournament for tournament selection
 XO_RATE         = 0.8  # crossover rate 
 PROB_MUTATION   = 0.2  # per-node mutation probability 
 
-def do(env, x, y, view = False): 
+def do(env, x, y, view = False, inputs = [] ,states_array = []): 
     i = 0
     ram = getRam(env)
     marioX, marioY, layer1x, layer1y  = getXY(ram)
     obs, rew, done, _info = env.step(np.array([0] * 12))  # Play action x, y times in env
+    if(view):
+        inputs.append(np.array([0] * 12))
+    
+        ram = getRam(env)
+        state, xi, yi = getInputs(ram)
+        saved_outputs = np.array(state.flatten())
+        saved_outputs = saved_outputs.astype(int)
+        states_array.append(saved_outputs)
+
     if ((marioY > 0) and (rew != 100)):
         for i in range(y):
             ram = getRam(env)
@@ -42,6 +52,16 @@ def do(env, x, y, view = False):
 
             if ((marioY > 0) and (rew != 100)):
                 obs, rew, done, _info = env.step(x)  # Play action x, y times in env
+                if(view):
+                    saved_inputs = np.array(x)
+                    saved_inputs = saved_inputs.astype(int)
+                    inputs.append(saved_inputs)
+
+                    ram = getRam(env)
+                    state, xi, yi = getInputs(ram)
+                    saved_outputs = np.array(state.flatten())
+                    saved_outputs = saved_outputs.astype(int)
+                    states_array.append(saved_outputs)
             else:
                 print(f"{x}, played {i} times and ended")
                 return x
@@ -64,6 +84,7 @@ def combine(x, y):
     return arr
 FUNCTIONS = [do, combine]
 TERMINALS = actions_ag
+print(len(TERMINALS))
 
 def target_func(x): # evolution's target
     return x*x*x*x + x*x*x + x*x + x + 1
@@ -176,13 +197,13 @@ class GPTree:
             # second.print_tree()
             self.scan_tree([randint(1, self.size())], second) # 2nd subtree "glued" inside 1st tree
 
-    def replay(self, env): 
+    def replay(self, env, Tinputs, Tstates_array): 
         # print(f"self.data = {self.data}, combine = {combine}, do = {do}")
         if (isinstance(self.data, np.ndarray) != True): 
             if (self.data == do):
-                return self.data(env, self.left.replay(env), self.right.data, view = True)
+                return self.data(env, self.left.replay(env, Tinputs, Tstates_array), self.right.data, view = True, inputs = Tinputs, states_array = Tstates_array)
             else: 
-                return self.data(self.left.replay(env), self.right.replay(env))
+                return self.data(self.left.replay(env, Tinputs, Tstates_array), self.right.replay(env, Tinputs, Tstates_array))
         else: return self.data
 # end class GPTree
                    
@@ -263,13 +284,29 @@ def main():
             best_of_run_gen = gen
             best_of_run = deepcopy(population[fitnesses.index(max(fitnesses))])
 
+            states_array = []
+            inputs = []
+
             print("________________________")
             print("gen:", gen, ", best_of_run_f:", round(max(fitnesses),3), ", best_of_run:") 
             best_of_run.print_tree()
 
             env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
             obs = env.reset()
-            best_of_run.replay(env)
+            best_of_run.replay(env, inputs, states_array)
+            #RAM State Array
+            final_state_array = np.empty((len(states_array),),dtype=object)
+            for i in range(len(states_array)):
+                final_state_array[i] = states_array[i]
+
+            #Action Array
+            final_action_array = np.empty((len(inputs),),dtype=object)
+            for i in range(len(inputs)):
+                final_action_array[i] = inputs[i]
+
+            dataset = np.array((final_state_array,final_action_array))
+            np.save("/home/bryan/dissertation/best_run",dataset)
+
             env.render(close=True)
             env.close()
 
@@ -281,7 +318,20 @@ def main():
 
     env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
     obs = env.reset()
-    best_of_run.replay(env)
+    best_of_run.replay(env, inputs, states_array)
+    #RAM State Array
+    final_state_array = np.empty((len(states_array),),dtype=object)
+    for i in range(len(states_array)):
+        final_state_array[i] = states_array[i]
+
+    #Action Array
+    final_action_array = np.empty((len(inputs),),dtype=object)
+    for i in range(len(inputs)):
+        final_action_array[i] = inputs[i]
+
+    dataset = np.array((final_state_array,final_action_array))
+    np.save("/home/bryan/dissertation/best_run_won",dataset)
+
     env.render(close=True)
     env.close()
     

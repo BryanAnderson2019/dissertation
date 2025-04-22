@@ -13,7 +13,7 @@ def open_npy_file(file_path):
 
 
 # Example usage
-file_path = '/home/bryan/MSC_Thesis/Player_Inputs/Dataset/YoshiIsland2/Session1L2.npy'  # Replace 'data.npy' with the path to your .npy file
+file_path = '/home/bryan/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Master_integer.npy'  # Replace 'data.npy' with the path to your .npy file
 loaded_data = open_npy_file(file_path)
 
 if loaded_data is not None:
