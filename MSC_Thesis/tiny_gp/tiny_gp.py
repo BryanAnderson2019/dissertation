@@ -150,11 +150,17 @@ class GPTree:
                 self.right.random_tree(grow, max_depth, depth = depth + 1)
 
     def mutation(self):
+        print("mutation in progress")
+        self.print_tree()
         if random() < PROB_MUTATION: # mutate at this node
             print("mutation happend")
             self.random_tree(grow = True, max_depth = 2)
-        elif self.left: self.left.mutation()
-        elif self.right: self.right.mutation() 
+        elif self.left: 
+            print("mutation when left")
+            self.left.mutation()
+        elif self.right: 
+            print("mutation when right")
+            self.right.mutation() 
 
     def size(self): # tree size in nodes
         if (isinstance(self.data, np.ndarray) or type(self.data) == int): return 0

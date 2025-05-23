@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath("/home/bryan/MSC_Thesis/Player_Inputs/Scripts/Ga
 from rominfo import *
 import retro
 import time
+import gzip
 
 #Code obtained from https://www.timguelke.net/blog/2021/2/14/action-space-for-the-openai-retro-gym-game-airstriker-genesis
 # Define button names and corresponding actions for the game
@@ -15,8 +16,9 @@ played_actions = []
 index = 1
 view = True
 
-env = retro.make(game="SuperMarioWorld-Snes", state='YoshiIsland2', scenario=None, obs_type=retro.Observations.IMAGE)
+env = retro.make(game="SuperMarioWorld-Snes", state='test', scenario=None, obs_type=retro.Observations.IMAGE)
 obs = env.reset()
+env.em.get_state()
 
 # Convert button actions to binary arrays
 for action in actionsArray:
@@ -53,6 +55,12 @@ def playActions(actions, times):
         # adds a ime delay
         #time.sleep(1)
 
+def save_state_to_file(env, name="test.state"):
+    
+    content = env.em.get_state()
+    with gzip.open(name, 'wb') as f:
+        f.write(content)
+
     ram = getRam(env)
     marioX, marioY, layer1x, layer1y  = getXY(ram)
     print(f"marioX = {marioX}, marioY = {marioY}")
@@ -64,3 +72,6 @@ playActions([], 2)
 playActions(["Y", "RIGHT"], 192)
 playActions([], 2)
 playActions(["Y", "RIGHT"], 150)
+
+# save_state_to_file(env) use this to save the state of the game
+
