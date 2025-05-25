@@ -97,10 +97,11 @@ def generate_dataset(): # generate 101 data points from target_func
     return dataset
 
 class GPTree:
-    def __init__(self, data = None, left = None, right = None):
+    def __init__(self, data = None, left = None, right = None, depth = None):
         self.data  = data
         self.left  = left
         self.right = right
+        self.depth = depth
         
     def node_label(self): # string label
         if (isinstance(self.data, np.ndarray) != True):
@@ -125,9 +126,13 @@ class GPTree:
                 return self.data(self.left.compute_tree(env), self.right.compute_tree(env))
         else: return self.data
             
-    def random_tree(self, grow, max_depth, depth = 0): # create random tree using either grow or full method
-        if depth == 0:
+    def random_tree(self, grow, max_depth, depth = 0, init = False): # create random tree using either grow or full method
+        if depth == 0 and init:
             self.data = FUNCTIONS[0]
+            self.depth = depth
+        elif self.depth == 0 and grow:
+            self.data = FUNCTIONS[0]
+            self.depth = depth
         elif depth < MIN_DEPTH or (depth < max_depth and not grow): 
             self.data = FUNCTIONS[randint(0, len(FUNCTIONS)-1)]
         elif depth >= max_depth:   
@@ -137,7 +142,8 @@ class GPTree:
                 self.data = TERMINALS[randint(0, len(TERMINALS)-1)]
             else:
                 self.data = FUNCTIONS[randint(0, len(FUNCTIONS)-1)]
-        if ((isinstance(self.data, np.ndarray) or type(self.data) == int) == False):
+
+        if ((isinstance(self.data, np.ndarray) or type(self.data) == int) == False): # if self.data is a function
             if (self.data == do):
                 self.left = GPTree()          
                 self.left.random_tree(grow, max_depth, depth = depth + 1)
@@ -151,19 +157,20 @@ class GPTree:
 
     def mutation(self):
         print("mutation in progress")
-        self.print_tree()
+        # self.print_tree()
         if random() < PROB_MUTATION: # mutate at this node
             print("mutation happend")
             self.random_tree(grow = True, max_depth = 2)
-        elif self.left: 
-            print("mutation when left")
-            self.left.mutation()
-        elif self.right: 
-            print("mutation when right")
-            self.right.mutation() 
+        else:
+            if self.left: 
+                print("mutation when left")
+                self.left.mutation()
+            if self.right and (type(self.right.data) != int): 
+                print("mutation when right")
+                self.right.mutation() 
 
     def size(self): # tree size in nodes
-        if (isinstance(self.data, np.ndarray) or type(self.data) == int): return 0
+        if (isinstance(self.data, np.ndarray) or type(self.data) == int): return 1
         l = self.left.size()  if self.left  else 0
         r = self.right.size() if self.right else 0
         return 1 + l + r
@@ -181,27 +188,33 @@ class GPTree:
         count[0] -= 1            
         if count[0] <= 1: 
             if not second: # return subtree rooted here
+                print("return subtree")
                 return self.build_subtree()
             else: # glue subtree here
+                print("glue subtree")
                 self.data  = second.data
                 self.left  = second.left
                 self.right = second.right
         else:  
             ret = None              
-            if self.left  and count[0] > 1 and (isinstance(self.data, np.ndarray) or type(self.data) == int): ret = self.left.scan_tree(count, second)  
-            if self.right and count[0] > 1 and (isinstance(self.data, np.ndarray) or type(self.data) == int): ret = self.right.scan_tree(count, second)  
+            if self.left  and count[0] > 1: 
+                print("scan_tree when left")
+                ret = self.left.scan_tree(count, second)
+            if self.right and count[0] > 1 and (type(self.right.data) != int): 
+                print("scan_tree when right")
+                ret = self.right.scan_tree(count, second)  
             return ret
     
     def crossover(self, other): # xo 2 trees at random nodes
         if random() < XO_RATE:
             print("crossover happend")
-            print("___________second_before_scan_tree____________")
-            other.print_tree()
-            print(f"other size = {other.size()}")
+            #print("___________second_before_scan_tree____________")
+            #other.print_tree()
+            #print(f"other size = {other.size()}")
             second = other.scan_tree([randint(1, other.size())], None) # 2nd random subtree
-            print("___________second_after_scan_tree____________")
-            # second.print_tree()
-            self.scan_tree([randint(1, self.size())], second) # 2nd subtree "glued" inside 1st tree
+            #print("___________second_after_scan_tree____________")
+            #second.print_tree()
+            self.scan_tree([randint(3, self.size())], second) # 2nd subtree "glued" inside 1st tree
 
     def replay(self, env, Tinputs, Tstates_array): 
         # print(f"self.data = {self.data}, combine = {combine}, do = {do}")
@@ -218,11 +231,11 @@ def init_population(): # ramped half-and-half
     for md in range(3, MAX_DEPTH + 1):
         for i in range(int(POP_SIZE/6)):
             t = GPTree()
-            t.random_tree(grow = True, max_depth = md) # grow
+            t.random_tree(grow = True, max_depth = md, init = True) # grow
             pop.append(t) 
         for i in range(int(POP_SIZE/6)):
             t = GPTree()
-            t.random_tree(grow = False, max_depth = md) # full
+            t.random_tree(grow = False, max_depth = md, init = True) # full
             pop.append(t) 
     return pop
 
