@@ -31,26 +31,17 @@ TOURNAMENT_SIZE = 5    # size of tournament for tournament selection
 XO_RATE         = 0.8  # crossover rate 
 PROB_MUTATION   = 0.2  # per-node mutation probability 
 
-def do(env, x, y, view = False, inputs = [] ,states_array = []): 
+def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = []): 
     i = 0
     ram = getRam(env)
     marioX, marioY, layer1x, layer1y  = getXY(ram)
-    obs, rew, done, _info = env.step(np.array([0] * 12))  # Play action x, y times in env
-    if(view):
-        inputs.append(np.array([0] * 12))
-    
-        ram = getRam(env)
-        state, xi, yi = getInputs(ram)
-        saved_outputs = np.array(state.flatten())
-        saved_outputs = saved_outputs.astype(int)
-        states_array.append(saved_outputs)
 
-    if ((marioY > 0) and (rew != 100)):
+    if ((marioY > 0) and (marioX < 4820)):
         for i in range(y):
             ram = getRam(env)
             marioX, marioY, layer1x, layer1y  = getXY(ram)
-
-            if ((marioY > 0) and (rew != 100)):
+            distances.append(marioX)
+            if ((marioY > 0) and (marioX < 4820)):
                 obs, rew, done, _info = env.step(x)  # Play action x, y times in env
                 if(view):
                     saved_inputs = np.array(x)
@@ -117,13 +108,13 @@ class GPTree:
         if self.left:  self.left.print_tree (prefix + "   ")
         if self.right: self.right.print_tree(prefix + "   ")
 
-    def compute_tree(self, env): 
+    def compute_tree(self, env, Tdistances): 
         # print(f"self.data = {self.data}, combine = {combine}, do = {do}")
         if (isinstance(self.data, np.ndarray) != True): 
             if (self.data == do):
-                return self.data(env, self.left.compute_tree(env), self.right.data)
+                return self.data(env, self.left.compute_tree(env, Tdistances), self.right.data, distances = Tdistances)
             else: 
-                return self.data(self.left.compute_tree(env), self.right.compute_tree(env))
+                return self.data(self.left.compute_tree(env, Tdistances), self.right.compute_tree(env, Tdistances))
         else: return self.data
             
     def random_tree(self, grow, max_depth, depth = 0, init = False): # create random tree using either grow or full method
@@ -242,25 +233,18 @@ def init_population(): # ramped half-and-half
 def fitness(individual, pop, gen):
     env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
     obs = env.reset()
+    distances = []
+
+    individual.compute_tree(env, distances)
     ram = getRam(env)
     marioX, marioY, layer1x, layer1y  = getXY(ram)
-    obs, rew, done, _info = env.step(np.array([0] * 12))
-    distances = [marioX]
-
-    # while ((marioY > 0) and (rew != 100)):
-    individual.compute_tree(env)
-
-    ram = getRam(env)
-    marioX, marioY, layer1x, layer1y  = getXY(ram)
-    obs, rew, done, _info = env.step(np.array([0] * 12))
-    distances.append(marioX)
-    # print(f"marioX = {marioX}, marioY = {marioY}")
 
     print(f"max(distances) = {max(distances)} for pop {pop} in gen {gen}")
     print(f"len(distances) = {len(distances)}")
+    print(f"fitness = {(100 * (max(distances) / FINISH))}")
     print(f"end marioX = {marioX}, marioY = {marioY}")
     env.close()
-    return 1 / (1 + abs(FINISH - max(distances)))
+    return (100 * (max(distances) / FINISH))
                 
 def selection(population, fitnesses): # select one individual using tournament selection
     tournament = [randint(0, len(population)-1) for i in range(TOURNAMENT_SIZE)] # select tournament contenders
@@ -329,7 +313,7 @@ def main():
             env.render(close=True)
             env.close()
 
-        if best_of_run_f == 1: break   
+        if best_of_run_f == 100: break   
     
     print("\n\n_________________________________________________\nEND OF RUN\nbest_of_run attained at gen " + str(best_of_run_gen) +\
           " and has f=" + str(round(best_of_run_f,3)))
