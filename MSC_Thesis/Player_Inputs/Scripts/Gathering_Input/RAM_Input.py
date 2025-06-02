@@ -35,6 +35,7 @@ import retro
 import pyglet
 from pyglet import gl
 from pyglet.window import key as keycodes
+import gzip
 
 from rominfo import *
 from baselines.common.retro_wrappers import *
@@ -264,6 +265,11 @@ class Interactive(abc.ABC):
             ('t2f', [0, 1, 1, 1, 1, 0, 0, 0]),
         )
 
+    def save_state_to_file(self, name="test.state"):
+        content = self._env.em.get_state()
+        with gzip.open(name, 'wb') as f:
+            f.write(content)
+
     #This method is called when the window is closed
     def _on_close(self):
         
@@ -282,7 +288,10 @@ class Interactive(abc.ABC):
 
         #Making a state acion pair. Remember to check the datatypes (they are objects -> arrays)
         dataset = np.array((final_state_array,final_action_array))
-        np.save("/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/YoshiIsland2/Session1L1",dataset)
+        # np.save("/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/YoshiIsland2/Session1L1",dataset)
+
+        self.save_state_to_file() # use this to save the state of the game
+
         self._env.close()
         sys.exit(0)
 

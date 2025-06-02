@@ -54,7 +54,7 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = []):
                     saved_outputs = saved_outputs.astype(int)
                     states_array.append(saved_outputs)
             else:
-                print(f"{x}, played {i} times and ended")
+                print(f"{x}, played {i + 1} times and ended")
                 return x
 
             if(view):
@@ -238,13 +238,19 @@ def fitness(individual, pop, gen):
     individual.compute_tree(env, distances)
     ram = getRam(env)
     marioX, marioY, layer1x, layer1y  = getXY(ram)
+    env.close()
+
+    punishments = len(distances) / 100
+    fitness = (100 * ((max(distances) - punishments) / FINISH))
 
     print(f"max(distances) = {max(distances)} for pop {pop} in gen {gen}")
     print(f"len(distances) = {len(distances)}")
-    print(f"fitness = {(100 * (max(distances) / FINISH))}")
+    print(f"fitness = {fitness}")
     print(f"end marioX = {marioX}, marioY = {marioY}")
-    env.close()
-    return (100 * (max(distances) / FINISH))
+
+    if (max(distances) >= FINISH):
+        return 100
+    return fitness
                 
 def selection(population, fitnesses): # select one individual using tournament selection
     tournament = [randint(0, len(population)-1) for i in range(TOURNAMENT_SIZE)] # select tournament contenders
@@ -265,7 +271,15 @@ def main():
     for gen in range(GENERATIONS):
         print("gen:", gen, ", has started")        
         nextgen_population=[]
-        for i in range(POP_SIZE):
+
+        best_fitnesses = fitnesses.copy()
+        best_fitnesses.sort(reverse=True)
+        
+        for i in range(2):
+            best = population[fitnesses.index(best_fitnesses[i])]
+            nextgen_population.append(best)
+
+        for i in range(POP_SIZE - 2):
             parent1 = selection(population, fitnesses)
             parent2 = selection(population, fitnesses)
             print(f"___________parent1_before_crossover_of_pop_{i}_gen_{gen}____________")
@@ -281,6 +295,10 @@ def main():
             
             nextgen_population.append(parent1)
         population=nextgen_population
+
+        print(f"best fitnesse1 = {best_fitnesses[0]}")
+        print(f"best fitnesse2 = {best_fitnesses[1]}")
+
         fitnesses = [fitness(population[i], i, gen) for i in range(POP_SIZE)]
         if max(fitnesses) > best_of_run_f:
             best_of_run_f = max(fitnesses)
