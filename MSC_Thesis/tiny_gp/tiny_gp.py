@@ -8,6 +8,7 @@ import numpy as np
 sys.path.append(os.path.abspath("/home/bryan/MSC_Thesis/Player_Inputs/Scripts/Gathering_Input"))
 from rominfo import *
 import retro
+import time
 
 level = "YoshiIsland2" 
 buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", "L", "R"]
@@ -24,6 +25,7 @@ for action in actionsArray:
 POP_SIZE        = 30   # population size
 MIN_DEPTH       = 2    # minimal initial random tree depth
 MAX_DEPTH       = 5    # maximal initial random tree depth
+ELITISM         = 2    # maximal number of best runs that pass to the next generation
 MAX_STEPS       = 300  # maximal steps the agent can do with one action
 FINISH          = 4820 # The x position of the worlds finish or just a goal for your mario agent
 GENERATIONS     = 250  # maximal number of generations to run evolution
@@ -234,19 +236,24 @@ def fitness(individual, pop, gen):
     env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
     obs = env.reset()
     distances = []
+    startTime = time.perf_counter()
 
     individual.compute_tree(env, distances)
     ram = getRam(env)
     marioX, marioY, layer1x, layer1y  = getXY(ram)
     env.close()
 
+    endTime = time.perf_counter()
+    elapsedTime = endTime - startTime
+
     punishments = len(distances) / 100
-    fitness = (100 * ((max(distances) - punishments) / FINISH))
+    fitness = (100 * (((max(distances) - punishments) - elapsedTime) / FINISH))
 
     print(f"max(distances) = {max(distances)} for pop {pop} in gen {gen}")
     print(f"len(distances) = {len(distances)}")
     print(f"fitness = {fitness}")
     print(f"end marioX = {marioX}, marioY = {marioY}")
+    print(f"elapsedTime = {elapsedTime} seconds")
 
     if (max(distances) >= FINISH):
         return 100
@@ -274,12 +281,8 @@ def main():
 
         best_fitnesses = fitnesses.copy()
         best_fitnesses.sort(reverse=True)
-        
-        for i in range(2):
-            best = population[fitnesses.index(best_fitnesses[i])]
-            nextgen_population.append(best)
 
-        for i in range(POP_SIZE - 2):
+        for i in range(POP_SIZE - ELITISM):
             parent1 = selection(population, fitnesses)
             parent2 = selection(population, fitnesses)
             print(f"___________parent1_before_crossover_of_pop_{i}_gen_{gen}____________")
@@ -294,10 +297,13 @@ def main():
             parent1.print_tree()
             
             nextgen_population.append(parent1)
-        population=nextgen_population
 
-        print(f"best fitnesse1 = {best_fitnesses[0]}")
-        print(f"best fitnesse2 = {best_fitnesses[1]}")
+        for i in range(ELITISM):
+            best = population[fitnesses.index(best_fitnesses[i])]
+            nextgen_population.append(best)
+
+            print(f"best fitnesse{i + 1} = {best_fitnesses[i]}")
+        population=nextgen_population
 
         fitnesses = [fitness(population[i], i, gen) for i in range(POP_SIZE)]
         if max(fitnesses) > best_of_run_f:
