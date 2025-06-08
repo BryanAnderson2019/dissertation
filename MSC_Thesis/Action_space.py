@@ -16,7 +16,7 @@ played_actions = []
 index = 1
 view = True
 
-env = retro.make(game="SuperMarioWorld-Snes", state='test2', scenario=None, obs_type=retro.Observations.IMAGE)
+env = retro.make(game="SuperMarioWorld-Snes", state='test', scenario=None, obs_type=retro.Observations.IMAGE)
 obs = env.reset()
 env.em.get_state()
 
@@ -68,8 +68,6 @@ def save_state_to_file(env, name="test.state"):
 playActions(["Y", "RIGHT"], 137)
 playActions([], 2)
 playActions(["Y", "RIGHT"], 160)
-playActions([], 2)
-playActions(["Y", "RIGHT"], 192)
 playActions([], 2)
 playActions(["Y", "RIGHT"], 150)
 

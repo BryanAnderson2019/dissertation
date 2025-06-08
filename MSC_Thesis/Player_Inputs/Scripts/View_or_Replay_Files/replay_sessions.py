@@ -8,10 +8,10 @@ import time
 
 buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", "L", "R"]
 # Load the Super Mario World environment
-env = retro.make(game="SuperMarioWorld-Snes", state='YoshiIsland2', obs_type=retro.Observations.IMAGE)
+env = retro.make(game="SuperMarioWorld-Snes", state='test', obs_type=retro.Observations.IMAGE)
 
 # Load training data from the .npy file
-Training = np.load("/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/best_runs/best_run_9.npy", allow_pickle=True)
+Training = np.load("/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/best_runs/best_run_test1.npy", allow_pickle=True)
 
 Xtrain = Training[0]
 Ytrain = Training[1]

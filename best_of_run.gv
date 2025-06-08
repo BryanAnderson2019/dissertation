@@ -1,5 +1,5 @@
 digraph {
-	graph [label="gen: 2, fitness: 25.979605162489623"]
+	graph [label="gen: 2, fitness: 33.541117251286224"]
 	0 [label=do]
 	0 -> 1
 	1 [label=do]
@@ -8,29 +8,29 @@ digraph {
 	2 -> 3
 	3 [label=combine]
 	3 -> 4
-	4 [label="[0 0 0 0 0 0 0 1 0 0 0 0]"]
-	3 -> 5
-	5 [label=combine]
+	4 [label=do]
+	4 -> 5
+	5 [label=do]
 	5 -> 6
-	6 [label=combine]
-	6 -> 7
-	7 [label="[1 0 0 0 0 0 0 0 0 0 0 0]"]
-	6 -> 8
-	8 [label="[0 1 0 0 0 0 0 0 0 0 0 0]"]
-	5 -> 9
-	9 [label=combine]
+	6 [label="[0 0 0 0 0 0 0 0 0 1 0 0]"]
+	5 -> 7
+	7 [label=199]
+	4 -> 8
+	8 [label=62]
+	3 -> 9
+	9 [label=do]
 	9 -> 10
-	10 [label="[0 1 0 0 0 0 0 0 0 0 0 0]"]
+	10 [label="[0 0 0 0 0 0 0 1 0 0 0 0]"]
 	9 -> 11
-	11 [label="[0 0 0 0 0 0 0 0 1 0 0 0]"]
+	11 [label=271]
 	2 -> 12
-	12 [label=do]
+	12 [label=combine]
 	12 -> 13
-	13 [label="[0 0 0 0 0 0 0 0 1 0 0 0]"]
+	13 [label="[0 1 0 0 0 0 0 0 0 0 0 0]"]
 	12 -> 14
-	14 [label=124]
+	14 [label="[0 1 0 0 0 0 0 0 0 0 0 0]"]
 	1 -> 15
-	15 [label=167]
+	15 [label=223]
 	0 -> 16
-	16 [label=289]
+	16 [label=238]
 }

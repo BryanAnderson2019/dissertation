@@ -10,7 +10,7 @@ from rominfo import *
 import retro
 import time
 
-level = "YoshiIsland2" 
+level = "test" 
 buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", "L", "R"]
 actionsArray = [["B"], ["Y"], ["DOWN"], ["LEFT"], ["RIGHT"], ["A"], ["X"]]
 actions_ag = []
@@ -26,6 +26,7 @@ POP_SIZE        = 30   # population size
 MIN_DEPTH       = 2    # minimal initial random tree depth
 MAX_DEPTH       = 5    # maximal initial random tree depth
 ELITISM         = 2    # maximal number of best runs that pass to the next generation
+DEATHPUNISHMENT = 20   # decide how much a death would be punished for
 MAX_STEPS       = 300  # maximal steps the agent can do with one action
 FINISH          = 4820 # The x position of the worlds finish or just a goal for your mario agent
 GENERATIONS     = 250  # maximal number of generations to run evolution
@@ -35,33 +36,34 @@ PROB_MUTATION   = 0.2  # per-node mutation probability
 
 def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = []): 
     i = 0
-    ram = getRam(env)
-    marioX, marioY, layer1x, layer1y  = getXY(ram)
-
-    if ((marioY > 0) and (marioX < 4820)):
-        for i in range(y):
-            ram = getRam(env)
-            marioX, marioY, layer1x, layer1y  = getXY(ram)
-            distances.append(marioX)
-            if ((marioY > 0) and (marioX < 4820)):
-                obs, rew, done, _info = env.step(x)  # Play action x, y times in env
-                if(view):
-                    saved_inputs = np.array(x)
-                    saved_inputs = saved_inputs.astype(int)
-                    inputs.append(saved_inputs)
-
-                    ram = getRam(env)
-                    state, xi, yi = getInputs(ram)
-                    saved_outputs = np.array(state.flatten())
-                    saved_outputs = saved_outputs.astype(int)
-                    states_array.append(saved_outputs)
-            else:
-                print(f"{x}, played {i + 1} times and ended")
-                return x
-
+    iEnd = 0
+    Ended = False
+    for i in range(y):
+        ram = getRam(env)
+        marioX, marioY, layer1x, layer1y  = getXY(ram)
+        distances.append(marioX)
+        if ((marioY > 0) and (marioX < 4820)):
+            obs, rew, done, _info = env.step(x)  # Play action x, y times in env
             if(view):
+                saved_inputs = np.array(x)
+                saved_inputs = saved_inputs.astype(int)
+                inputs.append(saved_inputs)
+
+                ram = getRam(env)
+                state, xi, yi = getInputs(ram)
+                saved_outputs = np.array(state.flatten())
+                saved_outputs = saved_outputs.astype(int)
+                states_array.append(saved_outputs)
                 env.render()  # Render the environment
-    print(f"{x}, played {i} times")
+        else:
+            if(Ended == False):
+                iEnd = i
+                Ended = True
+
+    if (Ended == False):
+        print(f"{x}, played {i + 1} times")
+    else:
+        print(f"{x}, played {iEnd} times and ended, would of been {y} times")
     #print("do has been done")
     return x
 
@@ -247,6 +249,8 @@ def fitness(individual, pop, gen):
     elapsedTime = endTime - startTime
 
     punishments = len(distances) / 100
+    if ((marioY > 0)):
+        punishments += DEATHPUNISHMENT
     fitness = (100 * (((max(distances) - punishments) - elapsedTime) / FINISH))
 
     print(f"max(distances) = {max(distances)} for pop {pop} in gen {gen}")
