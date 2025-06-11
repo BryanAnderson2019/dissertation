@@ -275,7 +275,7 @@ def fitness(individual, pop, gen):
     elapsedTime = endTime - startTime
 
     punishments = len(distances) / 100
-    if ((marioY > 0)):
+    if ((marioY == 0)):
         punishments += DEATHPUNISHMENT
     fitness = (100 * (((max(distances) - punishments) - elapsedTime) / FINISH))
 

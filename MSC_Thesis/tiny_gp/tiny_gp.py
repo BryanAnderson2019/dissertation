@@ -10,7 +10,7 @@ from rominfo import *
 import retro
 import time
 
-level = "test" 
+level = "YoshiIsland2" 
 buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", "L", "R"]
 actionsArray = [["B"], ["Y"], ["DOWN"], ["LEFT"], ["RIGHT"], ["A"], ["X"]]
 actions_ag = []
@@ -77,7 +77,18 @@ def combine(x, y):
 
     # print("combine has been done")
     return arr
-FUNCTIONS = [do, combine]
+
+def subtract(x, y): 
+    arr = np.array([0] * 12)
+    for i in range(12):
+        if x[i] - y[i] < 1:
+            arr[i] = 0
+        else:
+            arr[i] = x[i] - y[i]
+
+    # print("subtract has been done")
+    return arr
+FUNCTIONS = [do, combine, subtract]
 TERMINALS = actions_ag
 print(len(TERMINALS))
 
@@ -150,19 +161,20 @@ class GPTree:
                 self.right = GPTree()
                 self.right.random_tree(grow, max_depth, depth = depth + 1)
 
-    def mutation(self):
+    def mutation(self, count): # note: count is list, so it's passed "by reference"
         print("mutation in progress")
+        count[0] -= 1
         # self.print_tree()
-        if random() < PROB_MUTATION: # mutate at this node
+        if count[0] <= 1 and random() < PROB_MUTATION: # mutate at this node
             print("mutation happend")
             self.random_tree(grow = True, max_depth = 2)
         else:
-            if self.left: 
+            if self.left:  
                 print("mutation when left")
-                self.left.mutation()
+                self.left.mutation(count)
             if self.right and (type(self.right.data) != int): 
                 print("mutation when right")
-                self.right.mutation() 
+                self.right.mutation(count) 
 
     def size(self): # tree size in nodes
         if (isinstance(self.data, np.ndarray) or type(self.data) == int): return 1
@@ -192,7 +204,7 @@ class GPTree:
                 self.right = second.right
         else:  
             ret = None              
-            if self.left  and count[0] > 1: 
+            if self.left and count[0] > 1: 
                 print("scan_tree when left")
                 ret = self.left.scan_tree(count, second)
             if self.right and count[0] > 1 and (type(self.right.data) != int): 
@@ -209,7 +221,12 @@ class GPTree:
             second = other.scan_tree([randint(1, other.size())], None) # 2nd random subtree
             #print("___________second_after_scan_tree____________")
             #second.print_tree()
-            self.scan_tree([randint(3, self.size())], second) # 2nd subtree "glued" inside 1st tree
+
+            randA = int(self.size() / 2)
+            if(randA < 3):
+                randA = 3
+            print(f"the size of self is {randA}")
+            self.scan_tree([randint(randA, self.size())], second) # 2nd subtree "glued" inside 1st tree
 
     def replay(self, env, Tinputs, Tstates_array): 
         # print(f"self.data = {self.data}, combine = {combine}, do = {do}")
@@ -249,11 +266,11 @@ def fitness(individual, pop, gen):
     elapsedTime = endTime - startTime
 
     punishments = len(distances) / 100
-    if ((marioY > 0)):
+    if ((marioY == 0)):
         punishments += DEATHPUNISHMENT
     fitness = (100 * (((max(distances) - punishments) - elapsedTime) / FINISH))
 
-    print(f"max(distances) = {max(distances)} for pop {pop} in gen {gen}")
+    print(f"max(distances) = {max(distances)} for pop {pop + 1} in gen {(gen)}")
     print(f"len(distances) = {len(distances)}")
     print(f"fitness = {fitness}")
     print(f"end marioX = {marioX}, marioY = {marioY}")
@@ -289,15 +306,16 @@ def main():
         for i in range(POP_SIZE - ELITISM):
             parent1 = selection(population, fitnesses)
             parent2 = selection(population, fitnesses)
-            print(f"___________parent1_before_crossover_of_pop_{i}_gen_{gen}____________")
+
+            print(f"___________parent1_before_crossover_of_pop_{i + 1}_gen_{gen}____________")
             parent1.print_tree()
-            print(f"___________parent2_before_crossover_of_pop_{i}_gen_{gen}____________")
+            print(f"___________parent2_before_crossover_of_pop_{i + 1}_gen_{gen}____________")
             parent2.print_tree()
             parent1.crossover(parent2)
-            print(f"___________parent1_after_crossover_of_pop_{i}_gen_{gen}____________")
+            print(f"___________parent1_after_crossover_of_pop_{i + 1}_gen_{gen}____________")
             parent1.print_tree()
-            parent1.mutation()
-            print(f"___________parent1_after_mutation_of_pop_{i}_gen_{gen}____________")
+            parent1.mutation([int(parent1.size() / 4)])
+            print(f"___________parent1_after_mutation_of_pop_{i + 1}_gen_{gen}____________")
             parent1.print_tree()
             
             nextgen_population.append(parent1)
@@ -312,7 +330,7 @@ def main():
         fitnesses = [fitness(population[i], i, gen) for i in range(POP_SIZE)]
         if max(fitnesses) > best_of_run_f:
             best_of_run_f = max(fitnesses)
-            best_of_run_gen = gen
+            best_of_run_gen = gen + 1
             best_of_run = deepcopy(population[fitnesses.index(max(fitnesses))])
 
             states_array = []
