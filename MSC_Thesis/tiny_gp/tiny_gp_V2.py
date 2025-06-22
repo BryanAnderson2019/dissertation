@@ -35,36 +35,71 @@ XO_RATE         = 0.8  # crossover rate
 PROB_MUTATION   = 0.2  # per-node mutation probability 
 
 def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = []): 
-    i = 0
-    iEnd = 0
-    Ended = False
-    for i in range(y):
-        ram = getRam(env)
-        marioX, marioY, layer1x, layer1y  = getXY(ram)
-        distances.append(marioX)
-        if ((marioY > 0) and (marioX < 4820)):
-            obs, rew, done, _info = env.step(x)  # Play action x, y times in env
-            if(view):
-                saved_inputs = np.array(x)
-                saved_inputs = saved_inputs.astype(int)
-                inputs.append(saved_inputs)
+    if (isinstance(x, np.ndarray)):
+        i = 0
+        iEnd = 0
+        Ended = False
+        for i in range(y):
+            ram = getRam(env)
+            marioX, marioY, layer1x, layer1y  = getXY(ram)
+            distances.append(marioX)
+            if ((marioY > 0) and (marioX < 4820)):
+                obs, rew, done, _info = env.step(x)  # Play action x, y times in env
+                if(view):
+                    saved_inputs = np.array(x)
+                    saved_inputs = saved_inputs.astype(int)
+                    inputs.append(saved_inputs)
 
-                ram = getRam(env)
-                state, xi, yi = getInputs(ram)
-                saved_outputs = np.array(state.flatten())
-                saved_outputs = saved_outputs.astype(int)
-                states_array.append(saved_outputs)
-                env.render()  # Render the environment
+                    ram = getRam(env)
+                    state, xi, yi = getInputs(ram)
+                    saved_outputs = np.array(state.flatten())
+                    saved_outputs = saved_outputs.astype(int)
+                    states_array.append(saved_outputs)
+                    env.render()  # Render the environment
+            else:
+                if(Ended == False):
+                    iEnd = i
+                    Ended = True
+
+        if (Ended == False):
+            print(f"{x}, played {i + 1} times")
         else:
-            if(Ended == False):
-                iEnd = i
-                Ended = True
-
-    if (Ended == False):
-        print(f"{x}, played {i + 1} times")
+            print(f"{x}, played {iEnd} times and ended, would of been {y} times")
     else:
-        print(f"{x}, played {iEnd} times and ended, would of been {y} times")
+        for action in x:
+            # print(action)
+            i = 0
+            iEnd = 0
+            Ended = False
+            for i in range(y):
+                ram = getRam(env)
+                marioX, marioY, layer1x, layer1y  = getXY(ram)
+                distances.append(marioX)
+                if ((marioY > 0) and (marioX < 4820)):
+                    obs, rew, done, _info = env.step(action)  # Play action x, y times in env
+                    if(view):
+                        saved_inputs = np.array(action)
+                        saved_inputs = saved_inputs.astype(int)
+                        inputs.append(saved_inputs)
+
+                        ram = getRam(env)
+                        state, xi, yi = getInputs(ram)
+                        saved_outputs = np.array(state.flatten())
+                        saved_outputs = saved_outputs.astype(int)
+                        states_array.append(saved_outputs)
+                        env.render()  # Render the environment
+                else:
+                    if(Ended == False):
+                        iEnd = i
+                        Ended = True
+
+            if (Ended == False):
+                print(f"{action}, played {i + 1} times (loop)")
+            else:
+                print(f"{action}, played {iEnd} times and ended, would of been {y} times (loop)")
+
     #print("do has been done")
+    print(x)
     return x
 
 def combine(x, y): 
@@ -78,8 +113,24 @@ def combine(x, y):
     # print("combine has been done")
     return arr
 
-def split(x, y): 
-    return x
+def split(x, y):
+    arr = []
+    print(f"split x = {x}")
+    print(f"split y = {y}") 
+
+    if (isinstance(x, np.ndarray)):
+        arr.append(x)
+    else:
+        for action in x:
+            arr.append(action)
+
+    if (isinstance(y, np.ndarray)):
+        arr.append(y)
+    else:
+        for action in y:
+            arr.append(action)
+
+    return arr
 
 actions_ag.append(combine(actions_ag[0], actions_ag[3]))
 actions_ag.append(combine(actions_ag[0], actions_ag[4]))
@@ -317,7 +368,8 @@ def main():
             parent1.crossover(parent2)
             print(f"___________parent1_after_crossover_of_pop_{i + 1}_gen_{gen}____________")
             parent1.print_tree()
-            parent1.mutation([int(parent1.size() / 4)])
+            #parent1.mutation([int(parent1.size() / 4)])
+            parent1.mutation([0])
             print(f"___________parent1_after_mutation_of_pop_{i + 1}_gen_{gen}____________")
             parent1.print_tree()
             
