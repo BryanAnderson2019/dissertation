@@ -88,6 +88,7 @@ def subtract(x, y):
 
     # print("subtract has been done")
     return arr
+
 FUNCTIONS = [do, combine, subtract]
 TERMINALS = actions_ag
 print(len(TERMINALS))
@@ -222,9 +223,10 @@ class GPTree:
             #print("___________second_after_scan_tree____________")
             #second.print_tree()
 
-            randA = int(self.size() / 2)
-            if(randA < 3):
-                randA = 3
+            # randA = int(self.size() / 2)
+            # if(randA < 3):
+            #    randA = 3
+            randA = 3
             print(f"the size of self is {randA}")
             self.scan_tree([randint(randA, self.size())], second) # 2nd subtree "glued" inside 1st tree
 
@@ -314,7 +316,8 @@ def main():
             parent1.crossover(parent2)
             print(f"___________parent1_after_crossover_of_pop_{i + 1}_gen_{gen}____________")
             parent1.print_tree()
-            parent1.mutation([int(parent1.size() / 4)])
+            #parent1.mutation([int(parent1.size() / 4)])
+            parent1.mutation([0])
             print(f"___________parent1_after_mutation_of_pop_{i + 1}_gen_{gen}____________")
             parent1.print_tree()
             

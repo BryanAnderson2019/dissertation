@@ -1,36 +1,154 @@
 digraph {
-	graph [label="gen: 2, fitness: 33.541117251286224"]
+	graph [label="
+
+best_of_run attained at gen 102 and has f=41.846"]
 	0 [label=do]
 	0 -> 1
-	1 [label=do]
+	1 [label=subtract]
 	1 -> 2
-	2 [label=combine]
+	2 [label=subtract]
 	2 -> 3
-	3 [label=combine]
+	3 [label=subtract]
 	3 -> 4
-	4 [label=do]
-	4 -> 5
-	5 [label=do]
-	5 -> 6
-	6 [label="[0 0 0 0 0 0 0 0 0 1 0 0]"]
-	5 -> 7
-	7 [label=199]
-	4 -> 8
-	8 [label=62]
-	3 -> 9
-	9 [label=do]
-	9 -> 10
-	10 [label="[0 0 0 0 0 0 0 1 0 0 0 0]"]
-	9 -> 11
-	11 [label=271]
-	2 -> 12
-	12 [label=combine]
-	12 -> 13
-	13 [label="[0 1 0 0 0 0 0 0 0 0 0 0]"]
-	12 -> 14
-	14 [label="[0 1 0 0 0 0 0 0 0 0 0 0]"]
-	1 -> 15
-	15 [label=223]
-	0 -> 16
-	16 [label=238]
+	4 [label="[0 0 0 0 0 1 0 0 0 0 0 0]"]
+	3 -> 5
+	5 [label="[0 0 0 0 0 0 0 0 0 1 0 0]"]
+	2 -> 6
+	6 [label=combine]
+	6 -> 7
+	7 [label=combine]
+	7 -> 8
+	8 [label="[1 0 0 0 0 0 0 0 0 0 0 0]"]
+	7 -> 9
+	9 [label="[1 0 0 0 0 0 0 0 0 0 0 0]"]
+	6 -> 10
+	10 [label=subtract]
+	10 -> 11
+	11 [label="[0 0 0 0 0 0 0 1 0 0 0 0]"]
+	10 -> 12
+	12 [label="[0 0 0 0 0 0 1 0 0 0 0 0]"]
+	1 -> 13
+	13 [label=subtract]
+	13 -> 14
+	14 [label=do]
+	14 -> 15
+	15 [label=subtract]
+	15 -> 16
+	16 [label=subtract]
+	16 -> 17
+	17 [label=do]
+	17 -> 18
+	18 [label="[0 0 0 0 0 0 0 1 0 0 0 0]"]
+	17 -> 19
+	19 [label=212]
+	16 -> 20
+	20 [label=do]
+	20 -> 21
+	21 [label="[0 0 0 0 0 1 0 0 0 0 0 0]"]
+	20 -> 22
+	22 [label=13]
+	15 -> 23
+	23 [label=combine]
+	23 -> 24
+	24 [label=subtract]
+	24 -> 25
+	25 [label="[1 0 0 0 0 0 0 0 0 0 0 0]"]
+	24 -> 26
+	26 [label="[0 1 0 0 0 0 0 0 0 0 0 0]"]
+	23 -> 27
+	27 [label=combine]
+	27 -> 28
+	28 [label="[1 0 0 0 0 0 0 0 0 0 0 0]"]
+	27 -> 29
+	29 [label="[0 0 0 0 0 1 0 0 0 0 0 0]"]
+	14 -> 30
+	30 [label=260]
+	13 -> 31
+	31 [label=subtract]
+	31 -> 32
+	32 [label=subtract]
+	32 -> 33
+	33 [label=do]
+	33 -> 34
+	34 [label="[0 0 0 0 0 0 0 0 1 0 0 0]"]
+	33 -> 35
+	35 [label=147]
+	32 -> 36
+	36 [label=combine]
+	36 -> 37
+	37 [label="[0 1 0 0 0 0 0 0 0 0 0 0]"]
+	36 -> 38
+	38 [label="[0 0 0 0 0 1 0 0 0 0 0 0]"]
+	31 -> 39
+	39 [label=combine]
+	39 -> 40
+	40 [label=subtract]
+	40 -> 41
+	41 [label=do]
+	41 -> 42
+	42 [label=combine]
+	42 -> 43
+	43 [label=subtract]
+	43 -> 44
+	44 [label=do]
+	44 -> 45
+	45 [label="[0 0 0 0 0 0 0 0 0 1 0 0]"]
+	44 -> 46
+	46 [label=235]
+	43 -> 47
+	47 [label=combine]
+	47 -> 48
+	48 [label="[0 0 0 0 0 1 0 0 0 0 0 0]"]
+	47 -> 49
+	49 [label="[0 0 0 0 0 0 1 0 0 0 0 0]"]
+	42 -> 50
+	50 [label="[0 0 0 0 0 0 0 1 0 0 0 0]"]
+	41 -> 51
+	51 [label=278]
+	40 -> 52
+	52 [label=do]
+	52 -> 53
+	53 [label=combine]
+	53 -> 54
+	54 [label="[0 1 0 0 0 0 0 0 0 0 0 0]"]
+	53 -> 55
+	55 [label="[0 0 0 0 0 0 0 1 0 0 0 0]"]
+	52 -> 56
+	56 [label=149]
+	39 -> 57
+	57 [label=combine]
+	57 -> 58
+	58 [label=combine]
+	58 -> 59
+	59 [label=do]
+	59 -> 60
+	60 [label="[1 0 0 0 0 0 0 0 0 0 0 0]"]
+	59 -> 61
+	61 [label=52]
+	58 -> 62
+	62 [label=combine]
+	62 -> 63
+	63 [label=do]
+	63 -> 64
+	64 [label="[0 1 0 0 0 0 0 0 0 0 0 0]"]
+	63 -> 65
+	65 [label=267]
+	62 -> 66
+	66 [label=subtract]
+	66 -> 67
+	67 [label="[0 0 0 0 0 0 0 0 0 1 0 0]"]
+	66 -> 68
+	68 [label="[0 0 0 0 0 0 0 0 1 0 0 0]"]
+	57 -> 69
+	69 [label=do]
+	69 -> 70
+	70 [label=combine]
+	70 -> 71
+	71 [label="[1 0 0 0 0 0 0 0 0 0 0 0]"]
+	70 -> 72
+	72 [label="[0 0 0 0 0 0 0 1 0 0 0 0]"]
+	69 -> 73
+	73 [label=27]
+	0 -> 74
+	74 [label=179]
 }

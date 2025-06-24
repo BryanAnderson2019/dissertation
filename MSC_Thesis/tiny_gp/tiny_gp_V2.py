@@ -385,7 +385,7 @@ def main():
         fitnesses = [fitness(population[i], i, gen) for i in range(POP_SIZE)]
         if max(fitnesses) > best_of_run_f:
             best_of_run_f = max(fitnesses)
-            best_of_run_gen = gen + 1
+            best_of_run_gen = gen
             best_of_run = deepcopy(population[fitnesses.index(max(fitnesses))])
 
             states_array = []
