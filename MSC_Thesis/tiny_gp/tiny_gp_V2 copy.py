@@ -15,6 +15,13 @@ buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", 
 actionsArray = [["B"], ["Y"], ["DOWN"], ["LEFT"], ["RIGHT"], ["A"]]
 actions_ag = []
 
+Training = np.load("/home/bryan/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Master_integer.npy", allow_pickle=True)
+print(Training.shape)
+Xtrain = np.array([val[:169] for val in Training])
+Ytrain = np.array([val[169:] for val in Training])
+print(Xtrain.shape)
+print(Ytrain.shape)
+
 for action in actionsArray:
     arr = np.array([0] * 12)
     for button in action:
@@ -34,16 +41,44 @@ TOURNAMENT_SIZE = 5    # size of tournament for tournament selection
 XO_RATE         = 0.8  # crossover rate 
 PROB_MUTATION   = 0.2  # per-node mutation probability 
 
-def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = []): 
+def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], punishment = 0): 
     if (isinstance(x, np.ndarray)):
         i = 0
         iEnd = 0
         Ended = False
+
+        input = 0
+        for i in range(12):
+            input += x[i]*pow(2, 12-(i+1))
+
         for i in range(y):
             ram = getRam(env)
             marioX, marioY, layer1x, layer1y  = getXY(ram)
             distances.append(marioX)
+          
             if ((marioY > 0) and (marioX < 4820)):
+                state, xi, yi = getInputs(ram)
+                output = np.array(state.flatten())
+                output = output.astype(int)
+
+                index = 0
+                for xstate in Xtrain:
+                    index += 1
+                    print((xstate == output).all())
+                    if (xstate == output).all():
+                        print(xstate)
+                        print(output)
+                        print(f"input = {[input]}, Ytrain at index = {Ytrain[index - 1]}")
+                        if [input] != Ytrain[index - 1]:
+                            print(index)
+                            print(f"not same action i = {i}")
+                            punishment += 1
+                            time.sleep(0.5)
+                        else:
+                            print(f"same action i = {i}")
+                            time.sleep(0.5)
+                        break 
+
                 obs, rew, done, _info = env.step(x)  # Play action x, y times in env
                 if(view):
                     saved_inputs = np.array(x)
@@ -71,11 +106,39 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = []):
             i = 0
             iEnd = 0
             Ended = False
+
+            input = 0
+            for i in range(12):
+                input += action[i]*pow(2, 12-(i+1))
+
             for i in range(y):
                 ram = getRam(env)
                 marioX, marioY, layer1x, layer1y  = getXY(ram)
                 distances.append(marioX)
+
                 if ((marioY > 0) and (marioX < 4820)):
+                    state, xi, yi = getInputs(ram)
+                    output = np.array(state.flatten())
+                    output = output.astype(int)
+
+                    index = 0
+                    for xstate in Xtrain:
+                        index += 1
+                        print((xstate == output).all())
+                        if (xstate == output).all():
+                            print(xstate)
+                            print(output)
+                            print(f"input = {[input]}, Ytrain at index = {Ytrain[index - 1]}")
+                            if [input] != Ytrain[index - 1]:
+                                print(index)
+                                print(f"not same action i = {i}")
+                                punishment += 1
+                                time.sleep(0.5)
+                            else:
+                                print(f"same action i = {i}")
+                                time.sleep(0.5)
+                            break 
+                        
                     obs, rew, done, _info = env.step(action)  # Play action x, y times in env
                     if(view):
                         saved_inputs = np.array(action)
@@ -180,13 +243,13 @@ class GPTree:
         if self.left:  self.left.print_tree (prefix + "   ")
         if self.right: self.right.print_tree(prefix + "   ")
 
-    def compute_tree(self, env, Tdistances): 
+    def compute_tree(self, env, Tdistances, Tpunishment): 
         # print(f"self.data = {self.data}, combine = {combine}, do = {do}")
         if (isinstance(self.data, np.ndarray) != True): 
             if (self.data == do):
-                return self.data(env, self.left.compute_tree(env, Tdistances), self.right.data, distances = Tdistances)
+                return self.data(env, self.left.compute_tree(env, Tdistances, Tpunishment), self.right.data, distances = Tdistances, punishment = Tpunishment)
             else: 
-                return self.data(self.left.compute_tree(env, Tdistances), self.right.compute_tree(env, Tdistances))
+                return self.data(self.left.compute_tree(env, Tdistances, Tpunishment), self.right.compute_tree(env, Tdistances, Tpunishment))
         else: return self.data
             
     def random_tree(self, grow, max_depth, depth = 0, init = False): # create random tree using either grow or full method
@@ -313,9 +376,10 @@ def fitness(individual, pop, gen):
     env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
     obs = env.reset()
     distances = []
+    punishment = 0
     startTime = time.perf_counter()
 
-    individual.compute_tree(env, distances)
+    individual.compute_tree(env, distances, punishment)
     ram = getRam(env)
     marioX, marioY, layer1x, layer1y  = getXY(ram)
     env.close()
@@ -323,7 +387,7 @@ def fitness(individual, pop, gen):
     endTime = time.perf_counter()
     elapsedTime = endTime - startTime
 
-    punishments = len(distances) / 100
+    punishments = punishment
     if ((marioY == 0)):
         punishments += DEATHPUNISHMENT
     fitness = (100 * (((max(distances) - punishments) - elapsedTime) / FINISH))

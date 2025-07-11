@@ -13,14 +13,27 @@ env = retro.make(game="SuperMarioWorld-Snes", state='YoshiIsland2', obs_type=ret
 # Load training data from the .npy file
 Training = np.load("/home/bryan/dissertation/best_run.npy", allow_pickle=True)
 
+arr = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1]
+result = 0
+for i in range(12):
+    result += arr[i]*pow(2, 12-(i+1))
+print(result)
+
+test = np.load("/home/bryan/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Master_integer.npy", allow_pickle=True)
+print(test.shape)
+Xtest = np.array([val[:169] for val in test])
+Ytest = np.array([val[169:] for val in test])
+print(Xtest.shape)
+print(Ytest.shape)
+
 Xtrain = Training[0]
 Ytrain = Training[1]
-print(Ytrain.shape)  # Print the shape of the training labels array
+print(Ytrain)  # Print the shape of the training labels array
+print(Ytrain.shape) 
 
 # Fix issues with numpy loading
 Ytrain = np.array([np.array(val) for val in Ytrain])
 Ytrain = np.array([val.reshape(1, 12) for val in Ytrain])  # Reshape to fit model
-
 print(Ytrain.shape)  # Print the shape of the training labels array
 
 # Reset the environment
