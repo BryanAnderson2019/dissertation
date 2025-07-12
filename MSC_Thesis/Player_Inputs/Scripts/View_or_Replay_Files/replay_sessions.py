@@ -19,7 +19,7 @@ for i in range(12):
     result += arr[i]*pow(2, 12-(i+1))
 print(result)
 
-test = np.load("/home/bryan/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Master_integer.npy", allow_pickle=True)
+test = np.load("/home/bryan/dissertation/best_run.npy", allow_pickle=True)
 print(test.shape)
 Xtest = np.array([val[:169] for val in test])
 Ytest = np.array([val[169:] for val in test])

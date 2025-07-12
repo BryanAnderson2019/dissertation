@@ -1,4 +1,7 @@
-# tiny genetic programming by © moshe sipper, www.moshesipper.com
+# tiny genetic programming plus, by © moshe sipper, www.moshesipper.com
+# graphic output, dynamic progress display, bloat-control option 
+# need to install https://pypi.org/project/graphviz/
+
 from random import random, randint, seed
 from statistics import mean
 from copy import deepcopy
@@ -9,10 +12,13 @@ sys.path.append(os.path.abspath("/home/bryan/MSC_Thesis/Player_Inputs/Scripts/Ga
 from rominfo import *
 import retro
 import time
+import matplotlib.pyplot as plt
+from IPython.display import Image, display
+from graphviz import Digraph, Source 
 
 level = "YoshiIsland2" 
 buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", "L", "R"]
-actionsArray = [["B"], ["Y"], ["DOWN"], ["LEFT"], ["RIGHT"], ["A"]]
+actionsArray = [["B"], ["Y"], ["DOWN"], ["LEFT"], ["RIGHT"], ["A"], ["X"]]
 actions_ag = []
 
 Training = np.load("/home/bryan/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Master_integer.npy", allow_pickle=True)
@@ -41,7 +47,7 @@ TOURNAMENT_SIZE = 5    # size of tournament for tournament selection
 XO_RATE         = 0.8  # crossover rate 
 PROB_MUTATION   = 0.2  # per-node mutation probability 
 
-def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], punishment = 0): 
+def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], punishment = []): 
     if (isinstance(x, np.ndarray)):
         i = 0
         iEnd = 0
@@ -57,29 +63,6 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
             distances.append(marioX)
           
             if ((marioY > 0) and (marioX < 4820)):
-                state, xi, yi = getInputs(ram)
-                output = np.array(state.flatten())
-                output = output.astype(int)
-
-                index = 0
-                for xstate in Xtrain:
-                    index += 1
-                    print((xstate == output).all())
-                    if (xstate == output).all():
-                        print(xstate)
-                        print(output)
-                        print(f"input = {[input]}, Ytrain at index = {Ytrain[index - 1]}")
-                        if [input] != Ytrain[index - 1]:
-                            print(index)
-                            print(f"not same action i = {i}")
-                            punishment += 1
-                            time.sleep(0.5)
-                        else:
-                            print(f"same action i = {i}")
-                            time.sleep(0.5)
-                        break 
-
-                obs, rew, done, _info = env.step(x)  # Play action x, y times in env
                 if(view):
                     saved_inputs = np.array(x)
                     saved_inputs = saved_inputs.astype(int)
@@ -91,6 +74,31 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
                     saved_outputs = saved_outputs.astype(int)
                     states_array.append(saved_outputs)
                     env.render()  # Render the environment
+                else:
+                    state, xi, yi = getInputs(ram)
+                    output = np.array(state.flatten())
+                    output = output.astype(int)
+
+                    index = 0
+                    for xstate in Xtrain:
+                        index += 1
+                        #print((xstate == output).all())
+                        if (xstate == output).all():
+                            #print(xstate)
+                            #print(output)
+                            #print(f"input = {[input]}, Ytrain at index = {Ytrain[index - 1]}")
+                            if [input] != Ytrain[index - 1]:
+                                #print(index)
+                                #print(f"not same action i = {i}")
+                                punishment[0] += 1
+                                #print(punishment[0])
+                                #time.sleep(0.5)
+                            else:
+                                print(f"same action i = {i}")
+                                #time.sleep(0.5)
+                            break 
+
+                obs, rew, done, _info = env.step(x)  # Play action x, y times in env
             else:
                 if(Ended == False):
                     iEnd = i
@@ -117,29 +125,6 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
                 distances.append(marioX)
 
                 if ((marioY > 0) and (marioX < 4820)):
-                    state, xi, yi = getInputs(ram)
-                    output = np.array(state.flatten())
-                    output = output.astype(int)
-
-                    index = 0
-                    for xstate in Xtrain:
-                        index += 1
-                        print((xstate == output).all())
-                        if (xstate == output).all():
-                            print(xstate)
-                            print(output)
-                            print(f"input = {[input]}, Ytrain at index = {Ytrain[index - 1]}")
-                            if [input] != Ytrain[index - 1]:
-                                print(index)
-                                print(f"not same action i = {i}")
-                                punishment += 1
-                                time.sleep(0.5)
-                            else:
-                                print(f"same action i = {i}")
-                                time.sleep(0.5)
-                            break 
-                        
-                    obs, rew, done, _info = env.step(action)  # Play action x, y times in env
                     if(view):
                         saved_inputs = np.array(action)
                         saved_inputs = saved_inputs.astype(int)
@@ -151,6 +136,31 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
                         saved_outputs = saved_outputs.astype(int)
                         states_array.append(saved_outputs)
                         env.render()  # Render the environment
+                    else:
+                        state, xi, yi = getInputs(ram)
+                        output = np.array(state.flatten())
+                        output = output.astype(int)
+
+                        index = 0
+                        for xstate in Xtrain:
+                            index += 1
+                            #print((xstate == output).all())
+                            if (xstate == output).all():
+                                #print(xstate)
+                                #print(output)
+                                #print(f"input = {[input]}, Ytrain at index = {Ytrain[index - 1]}")
+                                if [input] != Ytrain[index - 1]:
+                                    #print(index)
+                                    #print(f"not same action i = {i}")
+                                    punishment[0] += 1
+                                    #print(punishment[0])
+                                    #time.sleep(0.5)
+                                else:
+                                    print(f"same action i = {i}")
+                                    #time.sleep(0.5)
+                                break 
+                        
+                    obs, rew, done, _info = env.step(action)  # Play action x, y times in env
                 else:
                     if(Ended == False):
                         iEnd = i
@@ -238,6 +248,26 @@ class GPTree:
         else: 
             return str(self.data)
     
+    def draw(self, dot, count): # dot & count are lists in order to pass "by reference" 
+        node_name = str(count[0])
+        dot[0].node(node_name, self.node_label())
+        if self.left:
+            count[0] += 1
+            dot[0].edge(node_name, str(count[0]))
+            self.left.draw(dot, count)
+        if self.right:
+            count[0] += 1
+            dot[0].edge(node_name, str(count[0]))
+            self.right.draw(dot, count)
+        
+    def draw_tree(self, fname, footer):
+        dot = [Digraph()]
+        dot[0].attr(kw='graph', label = footer)
+        count = [0]
+        self.draw(dot, count)
+        Source(dot[0], filename = fname + ".gv", format="png").render()
+        display(Image(filename = fname + ".gv.png"))
+
     def print_tree(self, prefix = ""): # textual printout
         print("%s%s" % (prefix, self.node_label()))        
         if self.left:  self.left.print_tree (prefix + "   ")
@@ -295,6 +325,12 @@ class GPTree:
             if self.right and (type(self.right.data) != int): 
                 print("mutation when right")
                 self.right.mutation(count) 
+        
+#    def depth(self):     
+#        if self.data in TERMINALS: return 0
+#        l = self.left.depth()  if self.left  else 0
+#        r = self.right.depth() if self.right else 0
+#        return 1 + max(l, r)
 
     def size(self): # tree size in nodes
         if (isinstance(self.data, np.ndarray) or type(self.data) == int): return 1
@@ -308,7 +344,7 @@ class GPTree:
         if self.left:  t.left  = self.left.build_subtree()
         if self.right: t.right = self.right.build_subtree()
         return t
-    
+                        
     def scan_tree(self, count, second): # note: count is list, so it's passed "by reference"
         print(f"count = {count[0]}")
         print(f"self.data = {self.data}")
@@ -324,14 +360,14 @@ class GPTree:
                 self.right = second.right
         else:  
             ret = None              
-            if self.left and count[0] > 1: 
+            if self.left  and count[0] > 1: 
                 print("scan_tree when left")
                 ret = self.left.scan_tree(count, second)
             if self.right and count[0] > 1 and (type(self.right.data) != int): 
                 print("scan_tree when right")
                 ret = self.right.scan_tree(count, second)  
             return ret
-    
+
     def crossover(self, other): # xo 2 trees at random nodes
         if random() < XO_RATE:
             print("crossover happend")
@@ -376,7 +412,7 @@ def fitness(individual, pop, gen):
     env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
     obs = env.reset()
     distances = []
-    punishment = 0
+    punishment = [0]
     startTime = time.perf_counter()
 
     individual.compute_tree(env, distances, punishment)
@@ -387,12 +423,13 @@ def fitness(individual, pop, gen):
     endTime = time.perf_counter()
     elapsedTime = endTime - startTime
 
-    punishments = punishment
+    punishments = punishment[0]
     if ((marioY == 0)):
         punishments += DEATHPUNISHMENT
     fitness = (100 * (((max(distances) - punishments) - elapsedTime) / FINISH))
 
-    print(f"max(distances) = {max(distances)} for pop {pop + 1} in gen {(gen)}")
+    print(f"punishments = {punishments}, punishment = {punishment[0]}")
+    print(f"max(distances) = {max(distances)} for pop {pop} in gen {gen}")
     print(f"len(distances) = {len(distances)}")
     print(f"fitness = {fitness}")
     print(f"end marioX = {marioX}, marioY = {marioY}")
@@ -407,6 +444,38 @@ def selection(population, fitnesses): # select one individual using tournament s
     tournament_fitnesses = [fitnesses[tournament[i]] for i in range(TOURNAMENT_SIZE)]
     return deepcopy(population[tournament[tournament_fitnesses.index(max(tournament_fitnesses))]]) 
             
+def prepare_plots():
+    fig, axarr = plt.subplots(2, sharex=True)
+    fig.canvas.set_window_title('EVOLUTIONARY PROGRESS V2 PD')
+    fig.subplots_adjust(hspace = 0.5)
+    axarr[0].set_title('fitness', fontsize=14)
+    axarr[1].set_title('mean size', fontsize=14)
+    plt.xlabel('generation', fontsize=18)
+    plt.ion() # interactive mode for plot
+    axarr[0].set_xlim(0, GENERATIONS)
+    axarr[0].set_ylim(0, 100) # fitness range
+    xdata = []
+    ydata = [ [], [] ]
+    line = [None, None]
+    line[0], = axarr[0].plot(xdata, ydata[0], 'b-') # 'b-' = blue line    
+    line[1], = axarr[1].plot(xdata, ydata[1], 'r-') # 'r-' = red line
+    return axarr, line, xdata, ydata
+
+def plot(axarr, line, xdata, ydata, gen, pop, fitness, max_mean_size):
+    xdata.append(gen)
+    ydata[0].append(mean(fitness))
+    line[0].set_xdata(xdata)
+    line[0].set_ydata(ydata[0])
+    sizes = [ind.size() for ind in pop]
+    if mean(sizes) > max_mean_size[0]:
+        max_mean_size[0] = mean(sizes)
+        axarr[1].set_ylim(0, max_mean_size[0])
+    ydata[1].append(mean(sizes))
+    line[1].set_xdata(xdata)
+    line[1].set_ydata(ydata[1])
+    plt.draw()  
+    plt.pause(0.01)
+
 def main():      
     # init stuff
     seed() # init internal state of random number generator
@@ -416,10 +485,12 @@ def main():
     best_of_run_f = 0
     best_of_run_gen = 0
     fitnesses = [fitness(population[i], i, "random") for i in range(POP_SIZE)]
+    max_mean_size = [0] # track maximal mean size for plotting
+    axarr, line, xdata, ydata = prepare_plots()
 
     # go evolution!
-    for gen in range(GENERATIONS):
-        print("gen:", gen, ", has started")        
+    for gen in range(GENERATIONS):        
+        print("gen:", gen, ", has started")   
         nextgen_population=[]
 
         best_fitnesses = fitnesses.copy()
@@ -429,20 +500,20 @@ def main():
             parent1 = selection(population, fitnesses)
             parent2 = selection(population, fitnesses)
 
-            print(f"___________parent1_before_crossover_of_pop_{i + 1}_gen_{gen}____________")
+            print(f"___________parent1_before_crossover_of_pop_{i}_gen_{gen}____________")
             parent1.print_tree()
-            print(f"___________parent2_before_crossover_of_pop_{i + 1}_gen_{gen}____________")
+            print(f"___________parent2_before_crossover_of_pop_{i}_gen_{gen}____________")
             parent2.print_tree()
             parent1.crossover(parent2)
-            print(f"___________parent1_after_crossover_of_pop_{i + 1}_gen_{gen}____________")
+            print(f"___________parent1_after_crossover_of_pop_{i}_gen_{gen}____________")
             parent1.print_tree()
             #parent1.mutation([int(parent1.size() / 4)])
             parent1.mutation([0])
-            print(f"___________parent1_after_mutation_of_pop_{i + 1}_gen_{gen}____________")
+            print(f"___________parent1_after_mutation_of_pop_{i}_gen_{gen}____________")
             parent1.print_tree()
             
             nextgen_population.append(parent1)
-
+        
         for i in range(ELITISM):
             best = population[fitnesses.index(best_fitnesses[i])]
             nextgen_population.append(best)
@@ -460,33 +531,36 @@ def main():
             inputs = []
 
             print("________________________")
-            print("gen:", gen, ", best_of_run_f:", round(max(fitnesses),3), ", best_of_run:") 
-            best_of_run.print_tree()
+            best_of_run.draw_tree("best_of_run_V2_PD",\
+                                  "gen: " + str(gen) + ", fitness: " + str(best_of_run_f))
+        plot(axarr, line, xdata, ydata, gen, population, fitnesses, max_mean_size)
+        best_of_run.print_tree()
 
-            env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
-            obs = env.reset()
-            best_of_run.replay(env, inputs, states_array)
-            #RAM State Array
-            final_state_array = np.empty((len(states_array),),dtype=object)
-            for i in range(len(states_array)):
-                final_state_array[i] = states_array[i]
+        env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
+        obs = env.reset()
+        # best_of_run.replay(env, inputs, states_array)
+        #RAM State Array
+        final_state_array = np.empty((len(states_array),),dtype=object)
+        for i in range(len(states_array)):
+            final_state_array[i] = states_array[i]
 
-            #Action Array
-            final_action_array = np.empty((len(inputs),),dtype=object)
-            for i in range(len(inputs)):
-                final_action_array[i] = inputs[i]
+        #Action Array
+        final_action_array = np.empty((len(inputs),),dtype=object)
+        for i in range(len(inputs)):
+            final_action_array[i] = inputs[i]
 
-            dataset = np.array((final_state_array,final_action_array))
-            np.save("/home/bryan/dissertation/best_run_V2",dataset)
+        dataset = np.array((final_state_array,final_action_array))
+        #np.save("/home/bryan/dissertation/best_run_V2",dataset)
 
-            env.render(close=True)
-            env.close()
-
-        if best_of_run_f == 100: break   
+        env.render(close=True)
+        env.close()
+        
+        if best_of_run_f == 100: break  
     
-    print("\n\n_________________________________________________\nEND OF RUN\nbest_of_run attained at gen " + str(best_of_run_gen) +\
-          " and has f=" + str(round(best_of_run_f,3)))
-    best_of_run.print_tree()
+    endrun = "_________________________________________________\nEND OF RUN"
+    print(endrun)
+    s = "\n\nbest_of_run attained at gen " + str(best_of_run_gen) + " and has f=" + str(round(best_of_run_f,3))
+    best_of_run.draw_tree("best_of_run_V2_PD",s)
 
     env = retro.make(game="SuperMarioWorld-Snes", state=level, scenario=None, obs_type=retro.Observations.IMAGE)
     obs = env.reset()
@@ -502,11 +576,10 @@ def main():
         final_action_array[i] = inputs[i]
 
     dataset = np.array((final_state_array,final_action_array))
-    np.save("/home/bryan/dissertation/best_run_V2_won",dataset)
+    np.save("/home/bryan/dissertation/best_run_V2_PD_won",dataset)
 
     env.render(close=True)
     env.close()
-    
     
 if __name__== "__main__":
   main()

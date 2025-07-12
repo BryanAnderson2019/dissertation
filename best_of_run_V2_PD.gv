@@ -1,0 +1,20 @@
+digraph {
+	graph [label="gen: 0, fitness: 20.03212880815351"]
+	0 [label=do]
+	0 -> 1
+	1 [label=do]
+	1 -> 2
+	2 [label=do]
+	2 -> 3
+	3 [label=do]
+	3 -> 4
+	4 [label="[0 1 0 0 0 0 0 1 0 0 0 0]"]
+	3 -> 5
+	5 [label=212]
+	2 -> 6
+	6 [label=261]
+	1 -> 7
+	7 [label=136]
+	0 -> 8
+	8 [label=273]
+}
