@@ -15,7 +15,7 @@ buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", 
 actionsArray = [["B"], ["Y"], ["DOWN"], ["LEFT"], ["RIGHT"], ["A"]]
 actions_ag = []
 
-Training = np.load("/home/bryan/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Master_integer.npy", allow_pickle=True)
+Training = np.load("/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Dataset_Wdupli2.npy", allow_pickle=True)
 print(Training.shape)
 Xtrain = np.array([val[:169] for val in Training])
 Ytrain = np.array([val[169:] for val in Training])
@@ -75,6 +75,10 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
 
                     index = 0
                     for xstate in Xtrain:
+                        #print(index)
+                        #print(xstate)
+                        #print(output)
+                        #time.sleep(1)
                         index += 1
                         #print((xstate == output).all())
                         if (xstate == output).all():
@@ -137,6 +141,10 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
 
                         index = 0
                         for xstate in Xtrain:
+                            #print(index)
+                            #print(xstate)
+                            #print(output)
+                            #time.sleep(1)
                             index += 1
                             #print((xstate == output).all())
                             if (xstate == output).all():
@@ -166,7 +174,7 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
                 print(f"{action}, played {iEnd} times and ended, would of been {y} times (loop)")
 
     #print("do has been done")
-    print(x)
+    print(punishment[0])
     return x
 
 def combine(x, y): 
@@ -215,6 +223,7 @@ actions_ag.append(combine(actions_ag[1], combine(actions_ag[5], actions_ag[4])))
 FUNCTIONS = [do, split]
 TERMINALS = actions_ag
 print(len(TERMINALS))
+print("")
 
 def target_func(x): # evolution's target
     return x*x*x*x + x*x*x + x*x + x + 1
@@ -391,7 +400,7 @@ def fitness(individual, pop, gen):
     endTime = time.perf_counter()
     elapsedTime = endTime - startTime
 
-    punishments = punishment[0]
+    punishments = punishment[0]/100
     if ((marioY == 0)):
         punishments += DEATHPUNISHMENT
     fitness = (100 * (((max(distances) - punishments) - elapsedTime) / FINISH))

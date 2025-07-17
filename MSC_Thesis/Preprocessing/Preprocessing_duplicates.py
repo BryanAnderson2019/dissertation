@@ -27,7 +27,7 @@ def remove_duplicates(data):
     return unique_data
 
 # Example usage
-file_path = '/Users/sankalpssss/Documents/marioenv/mario/mario2/Data final/Combined_dataset/Integer/Master_integer.npy'
+file_path = '/home/bryan/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Master_integer.npy'
 loaded_data = open_npy_file(file_path)
 print("Original Dataset Shape", loaded_data.shape)
 
@@ -35,10 +35,9 @@ if loaded_data is not None:
     # Remove duplicate rows
     unique_data = remove_duplicates(loaded_data)
     print("Dataset after removing duplicates", unique_data.shape)
-
-    """
+    
     # Save the new dataset
-    new_file_path = '/Users/sankalpssss/Documents/marioenv/mario/mario2/Data final/Combined_dataset/Integer/Dataset_Wdupli.npy'
+    new_file_path = '/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Dataset_Wdupli.npy'
     np.save(new_file_path, unique_data)
     print("New dataset saved successfully as", new_file_path)
-    """
+    

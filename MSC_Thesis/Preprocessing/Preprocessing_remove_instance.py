@@ -26,7 +26,7 @@ def integer_to_binary_array(integer_value, array_length=12):
     return np.array(binary_array)
 
 # Example usage
-file_path = '/Users/sankalpssss/Documents/marioenv/mario/mario2/Data final/Combined_dataset/Integer/Dataset_Wdupli13.npy'
+file_path = '/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Dataset_Wdupli.npy'
 loaded_data = open_npy_file(file_path)
 
 if loaded_data is not None:
@@ -67,6 +67,6 @@ print(label_to_index)
 filtered_indices = np.where((y != 16) & (y!=0) & (y!=48) & (y!=32) & (y!=40) & (y!=2080) & (y!=2096) & (y!=56) & (y!=80))[0]
 filtered_dataset = loaded_data[filtered_indices]
 
-np.save('/Users/sankalpssss/Documents/marioenv/mario/mario2/Data final/Combined_dataset/Integer/Dataset_Wdupli13.npy', filtered_dataset)
+np.save('/home/bryan/dissertation/MSC_Thesis/Player_Inputs/Dataset/Combined_Dataset/Dataset_Wdupli2.npy', filtered_dataset)
 
 print('Filtered Dataset size:', filtered_dataset.shape)
