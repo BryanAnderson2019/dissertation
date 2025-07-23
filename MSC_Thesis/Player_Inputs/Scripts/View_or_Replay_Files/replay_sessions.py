@@ -11,7 +11,7 @@ buttons = ["B", "Y", "SELECT","START", "UP", "DOWN", "LEFT", "RIGHT", "A", "X", 
 env = retro.make(game="SuperMarioWorld-Snes", state='YoshiIsland2', obs_type=retro.Observations.IMAGE)
 
 # Load training data from the .npy file
-Training = np.load("/home/bryan/dissertation/best_run.npy", allow_pickle=True)
+Training = np.load("/home/bryan/dissertation/best_run_V2_won.npy", allow_pickle=True)
 
 arr = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1]
 result = 0
@@ -19,7 +19,7 @@ for i in range(12):
     result += arr[i]*pow(2, 12-(i+1))
 print(result)
 
-test = np.load("/home/bryan/dissertation/best_run.npy", allow_pickle=True)
+test = np.load("/home/bryan/dissertation/best_run_V2_won.npy", allow_pickle=True)
 print(test.shape)
 Xtest = np.array([val[:169] for val in test])
 Ytest = np.array([val[169:] for val in test])

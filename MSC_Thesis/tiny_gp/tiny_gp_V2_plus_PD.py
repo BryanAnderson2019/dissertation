@@ -60,9 +60,11 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
         for i in range(y):
             ram = getRam(env)
             marioX, marioY, layer1x, layer1y  = getXY(ram)
-            distances.append(marioX)
-          
+
             if ((marioY > 0) and (marioX < 4820)):
+                distances.append(marioX)
+                obs, rew, done, _info = env.step(x)  # Play action x, y times in env
+
                 if(view):
                     saved_inputs = np.array(x)
                     saved_inputs = saved_inputs.astype(int)
@@ -99,19 +101,12 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
                                 #time.sleep(0.5)
                             else:
                                 print(f"same action i = {i}")
-                                #time.sleep(0.5)
-                            break 
-
-                obs, rew, done, _info = env.step(x)  # Play action x, y times in env
+                                #time.sleep(0.5) 
             else:
                 if(Ended == False):
                     iEnd = i
                     Ended = True
-
-        if (Ended == False):
-            print(f"{x}, played {i + 1} times")
-        else:
-            print(f"{x}, played {iEnd} times and ended, would of been {y} times")
+                    break
     else:
         for action in x:
             # print(action)
@@ -126,9 +121,11 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
             for i in range(y):
                 ram = getRam(env)
                 marioX, marioY, layer1x, layer1y  = getXY(ram)
-                distances.append(marioX)
 
                 if ((marioY > 0) and (marioX < 4820)):
+                    distances.append(marioX)
+                    obs, rew, done, _info = env.step(action)  # Play action x, y times in env
+
                     if(view):
                         saved_inputs = np.array(action)
                         saved_inputs = saved_inputs.astype(int)
@@ -166,22 +163,23 @@ def do(env, x, y, view = False, inputs = [] ,states_array = [], distances = [], 
                                 else:
                                     print(f"same action i = {i}")
                                     #time.sleep(0.5)
-                                break 
-                        
-                    obs, rew, done, _info = env.step(action)  # Play action x, y times in env
                 else:
                     if(Ended == False):
                         iEnd = i
                         Ended = True
+                        break
 
-            if (Ended == False):
-                print(f"{action}, played {i + 1} times (loop)")
-            else:
-                print(f"{action}, played {iEnd} times and ended, would of been {y} times (loop)")
+            if (Ended):
+                break
 
+            
+
+    if (Ended == False):
+        print(f"{x}, played {i + 1} times")
+    else:
+        print(f"{x}, played {iEnd} times and ended, would of been {y} times")
     #print("do has been done")
-    if(view != True):
-        print(punishment[0])
+    print(punishment)
     return x
 
 def combine(x, y): 
@@ -433,7 +431,7 @@ def fitness(individual, pop, gen):
     endTime = time.perf_counter()
     elapsedTime = endTime - startTime
 
-    punishments = punishment[0]/100
+    punishments = punishment[0]/10
     if ((marioY == 0)):
         punishments += DEATHPUNISHMENT
     fitness = (100 * (((max(distances) - punishments) - elapsedTime) / FINISH))
@@ -458,7 +456,7 @@ def prepare_plots():
     fig, axarr = plt.subplots(2, sharex=True)
     fig.canvas.set_window_title('EVOLUTIONARY PROGRESS V2 PD')
     fig.subplots_adjust(hspace = 0.5)
-    axarr[0].set_title('fitness', fontsize=14)
+    axarr[0].set_title('max fitness', fontsize=14)
     axarr[1].set_title('mean size', fontsize=14)
     plt.xlabel('generation', fontsize=18)
     plt.ion() # interactive mode for plot
@@ -473,7 +471,7 @@ def prepare_plots():
 
 def plot(axarr, line, xdata, ydata, gen, pop, fitness, max_mean_size):
     xdata.append(gen)
-    ydata[0].append(mean(fitness))
+    ydata[0].append(max(fitness))
     line[0].set_xdata(xdata)
     line[0].set_ydata(ydata[0])
     sizes = [ind.size() for ind in pop]

@@ -16,7 +16,7 @@ played_actions = []
 index = 1
 view = True
 
-env = retro.make(game="SuperMarioWorld-Snes", state='test', scenario=None, obs_type=retro.Observations.IMAGE)
+env = retro.make(game="SuperMarioWorld-Snes", state='YoshiIsland2', scenario=None, obs_type=retro.Observations.IMAGE)
 obs = env.reset()
 env.em.get_state()
 
@@ -65,11 +65,34 @@ def save_state_to_file(env, name="test.state"):
     marioX, marioY, layer1x, layer1y  = getXY(ram)
     print(f"marioX = {marioX}, marioY = {marioY}")
 
-playActions(["Y", "RIGHT"], 137)
-playActions([], 2)
-playActions(["Y", "RIGHT"], 160)
-playActions([], 2)
-playActions(["Y", "RIGHT"], 150)
+playActions(["Y", "RIGHT"], 232)
+playActions(["Y", "RIGHT"], 206)
+playActions(["RIGHT", "A"], 129)
+playActions(["Y", "RIGHT"], 129)
+playActions(["B"], 5)
+playActions(["RIGHT", "A"], 18)
+playActions(["B"], 146)
+playActions(["RIGHT", "A"], 146)
+playActions(["X"], 146)
+playActions(["B", "Y", "RIGHT"], 97)
+playActions(["RIGHT", "A"], 193)
+playActions(["RIGHT", "A"], 132)
+playActions(["B"], 38)
+playActions(["B"], 183)
+
+playActions(["Y", "RIGHT"], 93)
+playActions(["RIGHT", "A"], 93)
+playActions(["Y", "RIGHT"], 93)
+playActions(["B"], 93)
+playActions(["RIGHT", "A"], 93)
+playActions(["X"], 93)
+playActions(["B", "Y", "RIGHT"], 93)
+playActions(["RIGHT", "A"], 93)
+playActions(["B"], 93)
+playActions(["X"], 93)
+playActions(["B", "LEFT"], 93)
+playActions(["Y", "LEFT"], 93)
+
 
 #save_state_to_file(env) # use this to save the state of the game
 

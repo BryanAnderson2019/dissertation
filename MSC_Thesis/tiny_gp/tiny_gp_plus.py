@@ -323,7 +323,7 @@ def prepare_plots():
     fig, axarr = plt.subplots(2, sharex=True)
     fig.canvas.set_window_title('EVOLUTIONARY PROGRESS')
     fig.subplots_adjust(hspace = 0.5)
-    axarr[0].set_title('fitness', fontsize=14)
+    axarr[0].set_title('max fitness', fontsize=14)
     axarr[1].set_title('mean size', fontsize=14)
     plt.xlabel('generation', fontsize=18)
     plt.ion() # interactive mode for plot
@@ -338,7 +338,7 @@ def prepare_plots():
 
 def plot(axarr, line, xdata, ydata, gen, pop, fitness, max_mean_size):
     xdata.append(gen)
-    ydata[0].append(mean(fitness))
+    ydata[0].append(max(fitness))
     line[0].set_xdata(xdata)
     line[0].set_ydata(ydata[0])
     sizes = [ind.size() for ind in pop]
