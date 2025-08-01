@@ -1,14 +1,11 @@
-# dissertation
+## Master_integer.npy
 
-### what is my work:
-MSC_Thesis/Action_space.py
+The result of combining all of The [YoshiIsland1](https://github.com/BryanAnderson2019/dissertation/tree/main/Project/Player_Inputs/Dataset/YoshiIsland1) and [YoshiIsland2](https://github.com/BryanAnderson2019/dissertation/tree/main/Project/Player_Inputs/Dataset/YoshiIsland2) folder content.
 
-MSC_Thesis/tiny_gp/tiny_gp.py, modified it to work for gym retro, the rest of it was made by Sipper, M.
+## Dataset_Wdupli1.npy
 
-MSC_Thesis/Player_Inputs/Dataset, The winning and losing files and folders were added by me
+The result of putting `Master_integer.npy` into [Preprocessing_duplicates.py](https://github.com/BryanAnderson2019/dissertation/blob/main/Project/Preprocessing/Preprocessing_duplicates.py) which removes all the duplicates from the dataset
 
-MSC_Thesis/Player_Inputs/Scripts/View_or_Replay_Files/split_dataset.py
+## Dataset_Wdupli2.npy
 
-tweaked some of the other files here and there
-
-
+The result of putting `Dataset_Wdupli1.npy` into [Preprocessing_remove_instance.py](https://github.com/BryanAnderson2019/dissertation/blob/main/Project/Preprocessing/Preprocessing_remove_instance.py) which filtered out undesired actions from the dataset

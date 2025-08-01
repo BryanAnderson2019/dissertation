@@ -1,5 +1,5 @@
 # Removing Duplicate Rows from the Dataset
-[Preprocessing_duplicates.py](https://github.com/sankalp-s/MSC_Thesis/blob/main/Preprocessing/Preprocessing_duplicates.py)
+[Preprocessing_duplicates.py](https://github.com/BryanAnderson2019/dissertation/blob/main/Project/Preprocessing/Preprocessing_duplicates.py) by [sankalp-s](https://github.com/sankalp-s)
 
 The provided script removes duplicate rows from a dataset. Here's a breakdown of the code:
 
@@ -14,7 +14,7 @@ The provided script removes duplicate rows from a dataset. Here's a breakdown of
 
 
 # Removing insignificant instances
-[Preprocessing_remove_instance.py](https://github.com/sankalp-s/MSC_Thesis/blob/main/Preprocessing/Preprocessing_remove_instance.py)
+[Preprocessing_remove_instance.py](https://github.com/BryanAnderson2019/dissertation/blob/main/Project/Preprocessing/Preprocessing_remove_instance.py) by [sankalp-s](https://github.com/sankalp-s)
 
 The provided script loads a dataset from a .npy file and prepares it for further processing.
 

@@ -2,7 +2,7 @@ Notebooks:
 
 # Random Agent
 
-[Randominput_Agent.py](https://github.com/sankalp-s/MSC_Thesis/blob/main/Random%20Agent/Randominput_Agent.py)
+[Randominput_Agent.py](https://github.com/BryanAnderson2019/dissertation/blob/main/Project/Random%20Agent/Randominput_Agent.py) by [sankalp-s](https://github.com/sankalp-s)
 
 The Python script interacts with the Super Mario World environment in Gym Retro, an environment for training reinforcement learning agents. It takes random actions within the game and updates key press counts and total rewards based on the agent's actions. Once the episode is completed, it prints the key press counts and generates plots to visualize the total rewards against time and the key press counts as a bar graph.
 
@@ -13,7 +13,7 @@ Video of the Random agent performing can be found here: [LINK](https://www.youtu
 
 # Action Space Mapping
 
-[Action_space.py](https://github.com/sankalp-s/MSC_Thesis/blob/main/Random%20Agent/Action_space.py)
+[Action_space.py](https://github.com/BryanAnderson2019/dissertation/blob/main/Project/Random%20Agent/Action_space.py) by [sankalp-s](https://github.com/sankalp-s)
 
 This code snippet defines a mapping between human-readable button names and binary action arrays for the OpenAI Retro Gym games. Each action corresponds to a combination of button presses in the game.
 

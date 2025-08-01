@@ -1,6 +1,6 @@
 # RAM-Action pair script
 
-[RAM_Input.py](https://github.com/sankalp-s/MSC_Thesis/blob/main/Player_Inputs/Scripts/Gathering_Input/RAM_Input.py)
+[RAM_Input.py](https://github.com/BryanAnderson2019/dissertation/blob/main/Project/Player_Inputs/Scripts/Gathering_Input/RAM_Input.py) by [sankalp-s](https://github.com/sankalp-s)
 
 This script provides a framework for creating interactive gym environments, particularly designed for retro games. It leverages Pyglet for rendering the game environment and managing user input, enabling real-time interaction with the game.
 
@@ -18,7 +18,7 @@ The `main()` function orchestrates the script's operation. It parses command-lin
 
 # Image-Action pair script
 
-[Image_Input.py](https://github.com/sankalp-s/MSC_Thesis/blob/main/Player_Inputs/Scripts/Gathering_Input/Image_Input.py)
+[Image_Input.py](https://github.com/BryanAnderson2019/dissertation/blob/main/Project/Player_Inputs/Scripts/Gathering_Input/Image_Input.py) by [sankalp-s](https://github.com/sankalp-s)
 
 Each data point consists of an extracted RAM state (a 13x13 flattened array) and its corresponding action sequence (presumably represented as a binary array of size 12).
 
@@ -46,7 +46,7 @@ This script snippet can be incorporated into reinforcement learning pipelines wh
 
 # ROM file
 
-[rominfo.py](https://github.com/sankalp-s/MSC_Thesis/blob/main/Player_Inputs/Scripts/Gathering_Input/rominfo.py)
+[rominfo.py](https://github.com/BryanAnderson2019/dissertation/blob/main/Project/Player_Inputs/Scripts/Gathering_Input/rominfo.py) by [sankalp-s](https://github.com/sankalp-s)
 
 This script provides functions to extract attributes from the RAM memory of the game Super Mario World. It includes functions to retrieve the agent's position, obtain information about sprites displayed on the screen, check for obstacles, and gather inputs within a specified radius around the agent. These functions are useful for creating AI agents or analyzing game states in reinforcement learning tasks. Additionally, the script contains a function to retrieve the entire RAM memory from the game environment, which can be utilized for various debugging or analysis purposes.
 

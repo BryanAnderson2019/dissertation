@@ -1,14 +1,11 @@
-# dissertation
+# Folder Description
 
-### what is my work:
-MSC_Thesis/Action_space.py
+## Dataset
 
-MSC_Thesis/tiny_gp/tiny_gp.py, modified it to work for gym retro, the rest of it was made by Sipper, M.
+The [Project](https://github.com/BryanAnderson2019/dissertation/tree/main/Project) folder contains the main bulk of the dissertation. 
 
-MSC_Thesis/Player_Inputs/Dataset, The winning and losing files and folders were added by me
+## Scripts
 
-MSC_Thesis/Player_Inputs/Scripts/View_or_Replay_Files/split_dataset.py
-
-tweaked some of the other files here and there
+The [bes_runs](https://github.com/BryanAnderson2019/dissertation/tree/main/best_runs) folder houses play sessions generated within the Super Mario World game environment from the GPs. Each dataset within this folder provides valuable insights into the GPs behavior, and game progression captured during gameplay sessions.
 
 
